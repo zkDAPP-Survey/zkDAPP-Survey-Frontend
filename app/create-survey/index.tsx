@@ -303,7 +303,7 @@ export default function CreateSurvey() {
   );
 }
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#FFFFFF" },
+  safe: { flex: 1, backgroundColor: palette.white },
 
   header: {
     paddingHorizontal: 16,
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: palette.white,
   },
   headerTitle: { fontSize: 26, fontWeight: "800", color: "#111827" },
 
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     fontSize: 16,
     color: "#111827",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: palette.white,
   },
   textarea: {
     height: 120,
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: palette.white,
   },
   datePlaceholder: { fontSize: 16, color: "#9CA3AF" },
 
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   chipOn: { borderColor: palette.primary, backgroundColor: "#EEF4FF" },
-  chipOff: { borderColor: "#E5E7EB", backgroundColor: "#FFFFFF" },
+  chipOff: { borderColor: "#E5E7EB", backgroundColor: palette.white },
   chipText: { fontSize: 14, fontWeight: "700" },
   chipTextOn: { color: palette.primary },
   chipTextOff: { color: "#6B7280" },
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     borderTopWidth: 1,
     borderTopColor: "#E5E7EB",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: palette.white,
     paddingHorizontal: 16,
     paddingVertical: 14,
     flexDirection: "row",
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: palette.white,
   },
   draftText: { fontSize: 16, fontWeight: "700", color: "#6B7280" },
 
@@ -425,8 +425,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
   },
-  nextText: { fontSize: 16, fontWeight: "800", color: "#FFFFFF" },
-  nextArrow: { color: "#FFFFFF", fontSize: 22, marginLeft: 10, marginTop: -1 },
+  nextText: { fontSize: 16, fontWeight: "800", color: palette.white },
+  nextArrow: { color: palette.white, fontSize: 22, marginLeft: 10, marginTop: -1 },
   dateValue: { fontSize: 16, color: "#111827" },
 
   modalBackdrop: {
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: palette.white,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     paddingBottom: 20,

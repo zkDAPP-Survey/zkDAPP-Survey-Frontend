@@ -12,6 +12,7 @@ import {
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSurveyDraft } from "./SurveyDraftContext";
+import { palette } from "@/theme/palette";
 
 type RequirementType = "Age" | "Location" | "Education level" | "";
 
@@ -312,7 +313,7 @@ export default function RequirementsStep() {
 }
 
 const styles = StyleSheet.create({
-    safe: { flex: 1, backgroundColor: "#FFFFFF" },
+    safe: { flex: 1, backgroundColor: palette.white },
 
     header: {
         paddingHorizontal: 16,
@@ -330,7 +331,7 @@ const styles = StyleSheet.create({
         borderColor: "#E5E7EB",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
     headerTitle: { fontSize: 26, fontWeight: "800", color: "#111827" },
 
@@ -340,7 +341,7 @@ const styles = StyleSheet.create({
 
     stepsRow: { flexDirection: "row", gap: 10, marginTop: 10 },
     stepPill: { flex: 1, height: 4, borderRadius: 999, backgroundColor: "#E5E7EB" },
-    stepPillActive: { backgroundColor: "palette.primary" },
+    stepPillActive: { backgroundColor: palette.primary },
 
     content: { paddingHorizontal: 16, paddingTop: 14 },
 
@@ -360,12 +361,12 @@ const styles = StyleSheet.create({
         borderRadius: 13,
         borderWidth: 1,
         borderColor: "#CFE3FF",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         alignItems: "center",
         justifyContent: "center",
         marginTop: 2,
     },
-    infoText: { flex: 1, color: "palette.primary", fontWeight: "700", lineHeight: 20 },
+    infoText: { flex: 1, color: palette.primary, fontWeight: "700", lineHeight: 20 },
 
     reqRow: { flexDirection: "row", alignItems: "flex-start", gap: 12 },
 
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
         borderColor: "#E5E7EB",
         borderRadius: 16,
         paddingHorizontal: 14,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
@@ -399,7 +400,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 14,
         fontSize: 16,
         color: "#111827",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
 
     trashBtn: {
@@ -432,7 +433,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     modalCard: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         borderRadius: 20,
         padding: 14,
         maxHeight: "60%",
@@ -478,7 +479,7 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     addReqPlus: { fontSize: 20, fontWeight: "900", color: "#111827" },
-    addReqText: { fontSize: 16, fontWeight: "900", color: "palette.primary" },
+    addReqText: { fontSize: 16, fontWeight: "900", color: palette.primary },
     addReqTextDisabled: { color: "#94A3B8" },
 
     helperText: {
@@ -495,7 +496,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         borderTopWidth: 1,
         borderTopColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         paddingHorizontal: 16,
         paddingVertical: 14,
         flexDirection: "row",
@@ -509,7 +510,7 @@ const styles = StyleSheet.create({
         borderColor: "#E5E7EB",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
     draftText: { fontSize: 16, fontWeight: "700", color: "#6B7280" },
 
@@ -517,11 +518,11 @@ const styles = StyleSheet.create({
         flex: 1.4,
         height: 56,
         borderRadius: 16,
-        backgroundColor: "palette.primary",
+        backgroundColor: palette.primary,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
     },
-    nextText: { fontSize: 16, fontWeight: "800", color: "#FFFFFF" },
-    nextArrow: { color: "#FFFFFF", fontSize: 22, marginLeft: 10, marginTop: -1 },
+    nextText: { fontSize: 16, fontWeight: "800", color: palette.white },
+    nextArrow: { color: palette.white, fontSize: 22, marginLeft: 10, marginTop: -1 },
 });

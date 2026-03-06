@@ -23,10 +23,10 @@ export default function MySurveys() {
           flexDirection: "row",
         })}
       >
-        <Text style={{ color: "#FFFFFF", fontSize: 18, fontWeight: "600" }}>
+        <Text style={{ color: palette.white, fontSize: 18, fontWeight: "600" }}>
           Create survey
         </Text>
-        <Text style={{ color: "#FFFFFF", fontSize: 22, marginLeft: 10, marginTop: -1 }}>
+        <Text style={{ color: palette.white, fontSize: 22, marginLeft: 10, marginTop: -1 }}>
           ›
         </Text>
       </Pressable>

@@ -12,6 +12,7 @@ import {
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSurveyDraft } from "./SurveyDraftContext";
+import { palette } from "@/theme/palette";
 
 function money(n: number) {
     // 1050 -> "1,050.00"
@@ -212,7 +213,7 @@ export default function SurveyBudgetStep() {
                             value={anonymity}
                             onValueChange={setAnonymity}
                             trackColor={{ false: "#E5E7EB", true: "palette.primary" }}
-                            thumbColor="#FFFFFF"
+                            thumbColor="palette.white"
                         />
                     </View>
                 </View>
@@ -235,7 +236,7 @@ export default function SurveyBudgetStep() {
 }
 
 const styles = StyleSheet.create({
-    safe: { flex: 1, backgroundColor: "#FFFFFF" },
+    safe: { flex: 1, backgroundColor: palette.white },
 
     header: {
         paddingHorizontal: 16,
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
         borderColor: "#E5E7EB",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
     headerTitle: { fontSize: 26, fontWeight: "800", color: "#111827" },
 
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 14,
         fontSize: 16,
         color: "#111827",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
 
     lockedInput: {
@@ -309,7 +310,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         borderWidth: 1,
         borderColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
@@ -341,7 +342,7 @@ const styles = StyleSheet.create({
         borderRadius: 18,
         borderWidth: 1,
         borderColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         padding: 14,
     },
     anonTop: { flexDirection: "row", alignItems: "flex-start", gap: 12 },
@@ -356,7 +357,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         borderTopWidth: 1,
         borderTopColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         paddingHorizontal: 16,
         paddingVertical: 14,
         flexDirection: "row",
@@ -370,7 +371,7 @@ const styles = StyleSheet.create({
         borderColor: "#E5E7EB",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
     draftText: { fontSize: 16, fontWeight: "700", color: "#6B7280" },
 
@@ -378,11 +379,11 @@ const styles = StyleSheet.create({
         flex: 1.4,
         height: 56,
         borderRadius: 16,
-        backgroundColor: "palette.primary",
+        backgroundColor: palette.primary,
         alignItems: "center",
         justifyContent: "center",
     },
-    publishText: { fontSize: 16, fontWeight: "900", color: "#FFFFFF" },
+    publishText: { fontSize: 16, fontWeight: "900", color: palette.white },
     inputError: {
         borderColor: "#EF4444",
         borderWidth: 1.5,

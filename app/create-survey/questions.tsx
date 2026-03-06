@@ -294,7 +294,7 @@ export default function QuestionsStep() {
                                             value={q.required}
                                             onValueChange={(v) => updateQuestion(q.id, { required: v })}
                                             trackColor={{ false: "#E5E7EB", true: palette.primary }}
-                                            thumbColor="#FFFFFF"
+                                            thumbColor="palette.white"
                                         />
                                     </View>
                                 </View>
@@ -327,7 +327,7 @@ export default function QuestionsStep() {
 }
 
 const styles = StyleSheet.create({
-    safe: { flex: 1, backgroundColor: "#FFFFFF" },
+    safe: { flex: 1, backgroundColor: palette.white },
 
     header: {
         paddingHorizontal: 16,
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
         borderColor: "#E5E7EB",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
     headerTitle: { fontSize: 26, fontWeight: "800", color: "#111827", flex: 1 },
 
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderWidth: 1,
         borderColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         fontSize: 16,
         color: "#111827",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
 
     typePill: {
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         borderWidth: 1,
         borderColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
         borderRadius: 9,
         borderWidth: 2,
         borderColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
     optionBox: { flex: 1 },
     optionInput: {
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         fontSize: 16,
         color: "#111827",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
 
     addOptionBtn: {
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
     addOptionPlus: { color: palette.primary, fontSize: 18, fontWeight: "900" },
     addOptionText: { color: palette.primary, fontSize: 14, fontWeight: "900" },
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderWidth: 1,
         borderColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         borderTopWidth: 1,
         borderTopColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         paddingHorizontal: 16,
         paddingVertical: 14,
         flexDirection: "row",
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
         borderColor: "#E5E7EB",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
     draftText: { fontSize: 16, fontWeight: "700", color: "#6B7280" },
 
@@ -546,8 +546,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         flexDirection: "row",
     },
-    nextText: { fontSize: 16, fontWeight: "800", color: "#FFFFFF" },
-    nextArrow: { color: "#FFFFFF", fontSize: 22, marginLeft: 10, marginTop: -1 },
+    nextText: { fontSize: 16, fontWeight: "800", color: palette.white },
+    nextArrow: { color: palette.white, fontSize: 22, marginLeft: 10, marginTop: -1 },
     // 1) styles.errorText (добавь в StyleSheet.create)
     errorText: {
         color: "#EF4444",
