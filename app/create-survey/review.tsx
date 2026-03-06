@@ -211,7 +211,7 @@ export default function SurveyBudgetStep() {
                         <Switch
                             value={anonymity}
                             onValueChange={setAnonymity}
-                            trackColor={{ false: "#E5E7EB", true: "#2F6BFF" }}
+                            trackColor={{ false: "#E5E7EB", true: "palette.primary" }}
                             thumbColor="#FFFFFF"
                         />
                     </View>
@@ -268,11 +268,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
         overflow: "hidden",
     },
-    progressActive: { height: 3, backgroundColor: "#2F6BFF" },
+    progressActive: { height: 3, backgroundColor: "palette.primary" },
 
     stepsRow: { flexDirection: "row", gap: 10, marginTop: 10 },
     stepPill: { flex: 1, height: 4, borderRadius: 999, backgroundColor: "#E5E7EB" },
-    stepPillActive: { backgroundColor: "#2F6BFF" },
+    stepPillActive: { backgroundColor: "palette.primary" },
 
     content: { paddingHorizontal: 16, paddingTop: 14 },
 
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#EEF4FF",
         padding: 14,
     },
-    costTitle: { fontSize: 13, fontWeight: "900", color: "#2F6BFF", marginBottom: 10 },
+    costTitle: { fontSize: 13, fontWeight: "900", color: "palette.primary", marginBottom: 10 },
 
     costRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 6 },
     costLeft: { color: "#6B7280", fontWeight: "700" },
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     costHr: { height: 1, backgroundColor: "#CFE3FF", marginVertical: 10 },
 
     totalLeft: { color: "#111827", fontWeight: "900" },
-    totalRight: { color: "#2F6BFF", fontWeight: "900" },
+    totalRight: { color: "palette.primary", fontWeight: "900" },
 
     anonCard: {
         marginTop: 14,
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     anonTop: { flexDirection: "row", alignItems: "flex-start", gap: 12 },
     anonTitle: { fontSize: 16, fontWeight: "900", color: "#111827" },
     anonSub: { marginTop: 6, color: "#6B7280", fontWeight: "600" },
-    anonLink: { marginTop: 8, color: "#2F6BFF", fontWeight: "800" },
+    anonLink: { marginTop: 8, color: "palette.primary", fontWeight: "800" },
 
     bottomBar: {
         position: "absolute",
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
         flex: 1.4,
         height: 56,
         borderRadius: 16,
-        backgroundColor: "#2F6BFF",
+        backgroundColor: "palette.primary",
         alignItems: "center",
         justifyContent: "center",
     },

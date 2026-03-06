@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
-
+import { palette } from "@/theme/palette";
 
 export default function MySurveys() {
   return (
@@ -13,7 +13,7 @@ export default function MySurveys() {
       <Pressable
         onPress={() => router.push("/create-survey")}
         style={({ pressed }) => ({
-          backgroundColor: "#2F6BFF",
+          backgroundColor: palette.primary,
           opacity: pressed ? 0.9 : 1,
           borderRadius: 16,
           height: 56,

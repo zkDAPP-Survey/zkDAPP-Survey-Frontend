@@ -5,7 +5,11 @@ import { SurveyDraftProvider } from "./SurveyDraftContext";
 export default function Layout() {
   return (
     <SurveyDraftProvider>
-      <Stack />
+      <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    />
     </SurveyDraftProvider>
   );
 }

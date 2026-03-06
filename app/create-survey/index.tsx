@@ -15,7 +15,7 @@ import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/dat
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useSurveyDraft } from "./SurveyDraftContext";
 import { StyleSheet } from "react-native";
-
+import { palette } from "@/theme/palette";
 
 
 const TAGS = ["Politics", "Finance", "Health", "Education", "Community", "Technology"];
@@ -336,11 +336,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     overflow: "hidden",
   },
-  progressActive: { height: 3, backgroundColor: "#2F6BFF" },
+  progressActive: { height: 3, backgroundColor: palette.primary },
 
   stepsRow: { flexDirection: "row", gap: 10, marginTop: 10 },
   stepPill: { flex: 1, height: 4, borderRadius: 999, backgroundColor: "#E5E7EB" },
-  stepPillActive: { backgroundColor: "#2F6BFF" },
+  stepPillActive: { backgroundColor: palette.primary },
 
   content: { paddingHorizontal: 16, paddingTop: 10 },
 
@@ -385,10 +385,10 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 1.5,
   },
-  chipOn: { borderColor: "#2F6BFF", backgroundColor: "#EEF4FF" },
+  chipOn: { borderColor: palette.primary, backgroundColor: "#EEF4FF" },
   chipOff: { borderColor: "#E5E7EB", backgroundColor: "#FFFFFF" },
   chipText: { fontSize: 14, fontWeight: "700" },
-  chipTextOn: { color: "#2F6BFF" },
+  chipTextOn: { color: palette.primary },
   chipTextOff: { color: "#6B7280" },
 
   bottomBar: {
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
     flex: 1.4,
     height: 56,
     borderRadius: 16,
-    backgroundColor: "#2F6BFF",
+    backgroundColor: palette.primary,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E5E7EB",
   },
 
-  modalBtnText: { fontSize: 16, color: "#2F6BFF" },
+  modalBtnText: { fontSize: 16, color: palette.primary },
   inputError: {
     borderColor: "#EF4444",
     borderWidth: 1.5,

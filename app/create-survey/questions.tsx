@@ -12,7 +12,7 @@ import {
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSurveyDraft } from "./SurveyDraftContext";
-
+import { palette } from "@/theme/palette";
 
 type QuestionType = "Multiple choice" | "Paragraph";
 
@@ -293,7 +293,7 @@ export default function QuestionsStep() {
                                         <Switch
                                             value={q.required}
                                             onValueChange={(v) => updateQuestion(q.id, { required: v })}
-                                            trackColor={{ false: "#E5E7EB", true: "#2F6BFF" }}
+                                            trackColor={{ false: "#E5E7EB", true: palette.primary }}
                                             thumbColor="#FFFFFF"
                                         />
                                     </View>
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    addQText: { fontWeight: "800", color: "#2F6BFF" },
+    addQText: { fontWeight: "800", color: palette.primary },
 
     sectionTop: { paddingHorizontal: 16, paddingBottom: 10 },
     sectionTitle: { fontSize: 16, fontWeight: "700", color: "#111827" },
@@ -372,11 +372,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
         overflow: "hidden",
     },
-    progressActive: { height: 3, backgroundColor: "#2F6BFF" },
+    progressActive: { height: 3, backgroundColor: palette.primary },
 
     stepsRow: { flexDirection: "row", gap: 10, marginTop: 10 },
     stepPill: { flex: 1, height: 4, borderRadius: 999, backgroundColor: "#E5E7EB" },
-    stepPillActive: { backgroundColor: "#2F6BFF" },
+    stepPillActive: { backgroundColor: palette.primary },
 
     content: { paddingHorizontal: 16, paddingTop: 10 },
 
@@ -478,8 +478,8 @@ const styles = StyleSheet.create({
         gap: 8,
         backgroundColor: "#FFFFFF",
     },
-    addOptionPlus: { color: "#2F6BFF", fontSize: 18, fontWeight: "900" },
-    addOptionText: { color: "#2F6BFF", fontSize: 14, fontWeight: "900" },
+    addOptionPlus: { color: palette.primary, fontSize: 18, fontWeight: "900" },
+    addOptionText: { color: palette.primary, fontSize: 14, fontWeight: "900" },
 
     paragraphBox: {
         borderWidth: 1,
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
         flex: 1.4,
         height: 56,
         borderRadius: 16,
-        backgroundColor: "#2F6BFF",
+        backgroundColor: palette.primary,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
