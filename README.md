@@ -18,21 +18,29 @@ This app is built with Expo + React Native and currently includes a tab-based st
 
 - Node.js 20 LTS (recommended)
 - npm 10+
+- Android Studio (with Android SDK installed)
+- Android Emulator or physical device
 - IDE: VS Code (recommended)
-- Expo Go app installed on physical mobile device
 
-## Detailed Setup
+## Quick Setup
 
-Check [SETUP.md](SETUP.md) for detailed setup instructions (both Valera and zkDAPP)
-
-
-## Install Dependencies
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-## Run The Project
+### 2. Configure Android SDK Path
+
+Create `android/local.properties` with your Android SDK location:
+
+```properties
+sdk.dir=C:\\Users\\<YourUsername>\\AppData\\Local\\Android\\Sdk
+```
+
+**To find your SDK path:** Open Android Studio → Settings → Appearance & Behavior → System Settings → Android SDK
+
+### 3. Run The Project
 
 Start the Expo dev server:
 
@@ -40,12 +48,21 @@ Start the Expo dev server:
 npx expo start
 ```
 
-In the output, you'll find options to open the app in a
+Build and run on Android emulator:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+```bash
+npx expo run:android
+```
+
+## Running with Valera Wallet
+
+To test credential sharing with Valera wallet, you'll need both apps running on the same Android emulator. 
+
+**Quick steps:**
+1. Set up and run zkDAPP Survey Frontend (steps above)
+2. Set up Valera wallet - see [Valera README](../valera/README.md#quick-setup) for setup instructions
+3. Both apps will communicate via deep links on the same emulator
+
 
 ## Useful Scripts
 

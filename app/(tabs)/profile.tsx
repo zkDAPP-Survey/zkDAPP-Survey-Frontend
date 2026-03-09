@@ -23,22 +23,22 @@ export default function Profile() {
             const callbackUrl = 'zkdappsurveyfrontend://auth';
             const valeraUrl = `asitplus-wallet://share?action=share&callback=${encodeURIComponent(callbackUrl)}&type=AgeVerification`;
             
-            console.log('Attempting to open Valera with URL:', valeraUrl);
+            const canOpen = await Linking.canOpenURL(valeraUrl);
+            
+            if (!canOpen) {
+                Alert.alert(
+                    'Valera Not Installed',
+                    'Valera wallet is not installed or not properly configured on this device.',
+                    [{ text: 'OK' }]
+                );
+                return;
+            }
             
             await Linking.openURL(valeraUrl);
             
         } catch (error: any) {
             console.error('Error requesting credential from Valera:', error);
-            
-            if (error?.message?.includes('No Activity found')) {
-                Alert.alert(
-                    'Valera Not Found',
-                    'The Valera wallet app is not installed on the emulator. Please install and run Valera first.',
-                    [{ text: 'OK' }]
-                );
-            } else {
-                Alert.alert('Error', 'Failed to open Valera wallet: ' + error?.message);
-            }
+            Alert.alert('Error', 'Failed to open Valera wallet: ' + (error?.message || 'Unknown error'));
         }
     };
 
