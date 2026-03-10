@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import SurveyCard, { type SurveyCardData } from "@/components/surveyCard";
 
+import { palette } from "@/theme/palette";
+
 type SortKey = "rewardDesc" | "rewardAsc" | "nameAsc";
 
 const CATEGORIES = ["All", "Health", "Finance", "Tech", "Politics", "Lifestyle", "Productivity"];
@@ -199,7 +201,7 @@ export default function Explore() {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
     container: {
         padding: 14,
@@ -216,8 +218,8 @@ const styles = StyleSheet.create({
         height: 44,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: "rgba(100, 116, 139, 0.28)",
-        backgroundColor: "rgba(100, 116, 139, 0.09)",
+        borderColor: palette.greyBorder,
+        backgroundColor: palette.greyBackground,
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 14,
@@ -226,18 +228,18 @@ const styles = StyleSheet.create({
     searchInput: {
         flex: 1,
         fontSize: 15,
-        color: "#000000",
+        color: palette.black,
     },
     filterButton: {
         height: 44,
         borderRadius: 12,
-        backgroundColor: "#2563EB",
+        backgroundColor: palette.primary,
         paddingHorizontal: 18,
         alignItems: "center",
         justifyContent: "center",
     },
     filterButtonText: {
-        color: "#FFFFFF",
+        color: palette.white,
         fontWeight: "600",
         fontSize: 14,
     },
@@ -248,22 +250,22 @@ const styles = StyleSheet.create({
     categoryChip: {
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: "rgba(100, 116, 139, 0.3)",
+        borderColor: palette.greyBorder,
         paddingHorizontal: 16,
         paddingVertical: 8,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
     categoryChipActive: {
-        backgroundColor: "#2563EB",
-        borderColor: "#2563EB",
+        backgroundColor: palette.primary,
+        borderColor: palette.primary,
     },
     categoryChipText: {
-        color: "#64748B",
+        color: palette.textSecondary,
         fontSize: 14,
         fontWeight: "500",
     },
     categoryChipTextActive: {
-        color: "#FFFFFF",
+        color: palette.white,
     },
     filterTagsRow: {
         flexDirection: "row",
@@ -272,17 +274,17 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     activeText: {
-        color: "#64748B",
+        color: palette.textSecondary,
         fontSize: 14,
     },
     activeTag: {
-        backgroundColor: "rgba(37, 99, 235, 0.12)",
+        backgroundColor: palette.primaryNegative,
         borderRadius: 9,
         paddingHorizontal: 10,
         paddingVertical: 6,
     },
     activeTagText: {
-        color: "#2563EB",
+        color: palette.primary,
         fontSize: 13,
         fontWeight: "500",
     },
@@ -292,11 +294,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     resultsText: {
-        color: "#64748B",
+        color: palette.textSecondary,
         fontSize: 17,
     },
     sortText: {
-        color: "#2563EB",
+        color: palette.primary,
         fontSize: 15,
         fontWeight: "600",
     },

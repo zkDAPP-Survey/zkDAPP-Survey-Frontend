@@ -24,6 +24,10 @@ export const palette = {
     textSecondary: "#64748B",
     textMuted: "#94A3B8",
 
+    // Grey
+    greyBackground: "#64748b17",
+    greyBorder: "#64748B4D",
+
     // Dark primary
     primaryDark: "#0F172A",
     primaryDarkText: "#475569",
