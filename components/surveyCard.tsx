@@ -4,19 +4,9 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { palette } from "@/theme/palette";
+import { SurveyCardData } from "@/domain/models";
 
-export type SurveyCardData = {
-    id: string;
-    name: string;
-    reward: number;
-    description: string;
-    tags: string[];
-    minutes: number;
-    participants: number;
-    participantsLimit: number;
-    qualifies: boolean;
-};
+import { palette } from "@/theme/palette";
 
 type Props = {
     survey: SurveyCardData;
@@ -51,21 +41,21 @@ export default function SurveyCard({ survey, onVote, voteLabel = "Vote" }: Props
     return (
         <View style={styles.card}>
             <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>{survey.name}</Text>
-                <Text style={styles.rewardText}>${survey.reward.toFixed(2)}</Text>
+                <Text style={styles.cardTitle}>{survey.title}</Text>
+                <Text style={styles.rewardText}>{survey.budget?.rewardPerVoter?.amount.toFixed(2) ?? "0.00"} {survey.budget?.rewardPerVoter?.currency ?? "USD"}</Text>
             </View>
 
             <Text style={styles.descriptionText}>{survey.description}</Text>
 
             <View style={styles.tagRow}>
-                {survey.tags.map((tag) => {
-                    const colors = TAG_COLOR[tag] ?? {
+                {survey.categories.map((cat) => {
+                    const colors = TAG_COLOR[cat.label] ?? {
                         bg: palette.gray.bgSoft,
                         text: palette.gray.text,
                     };
                     return (
-                        <View key={tag} style={[styles.tag, { backgroundColor: colors.bg }]}>
-                            <Text style={[styles.tagText, { color: colors.text }]}>{tag}</Text>
+                        <View key={cat.id} style={[styles.tag, { backgroundColor: colors.bg }]}>
+                            <Text style={[styles.tagText, { color: colors.text }]}>{cat.label}</Text>
                         </View>
                     );
                 })}
@@ -76,15 +66,15 @@ export default function SurveyCard({ survey, onVote, voteLabel = "Vote" }: Props
             <View style={styles.cardFooter}>
                 <View style={styles.metaRow}>
                     <FontAwesome6 name="clock" size={13} color={palette.black} />
-                    <Text style={styles.metaText}>{survey.minutes} min</Text>
+                    <Text style={styles.metaText}>{survey.estimatedMinutes} min</Text>
                 </View>
                 <View style={styles.metaRow}>
                     <MaterialCommunityIcons name="account" size={16} color={palette.black} />
                     <Text style={styles.metaText}>
-                        {survey.participants}/{survey.participantsLimit}
+                        {survey.progress?.responseCount ?? 0}/{survey.progress?.targetResponses ?? 0}
                     </Text>
                 </View>
-                {survey.qualifies ? (
+                {survey.eligibility?.decision === "qualify" ? (
                     <View style={styles.metaRow}>
                         <Feather name="check-circle" size={14} color={palette.success} />
                         <Text style={[styles.metaText, styles.metaTextPositive]}>

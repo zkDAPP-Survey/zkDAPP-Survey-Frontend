@@ -7,14 +7,7 @@ export type CurrencyCode = 'USD' | 'USDC' | 'EUR' | 'TOKEN' | string;
 /* enums / unions                     */
 /* ---------------------------------- */
 
-export type SurveyStatus =
-  | 'draft'
-  | 'scheduled'
-  | 'live'
-  | 'paused'
-  | 'ended'
-  | 'completed'
-  | 'archived';
+export type SurveyStatus = "active" | "draft" | "results";
 
 export type SurveyVisibility = 'public' | 'unlisted' | 'private';
 
@@ -43,24 +36,15 @@ export type EligibilityDecision =
   | 'verification_required';
 
 export type RequirementType =
-  | 'age'
-  | 'location'
-  | 'country'
-  | 'region'
-  | 'education'
-  | 'citizenship'
-  | 'custom';
+  | 'Age'
+  | 'Location'
+  | 'Education level'
+  | '';
 
-export type QuestionType =
+export type QuestionType = //
   | 'single_choice'
   | 'multiple_choice'
-  | 'text'
-  | 'textarea'
-  | 'number'
-  | 'boolean'
-  | 'rating'
-  | 'dropdown'
-  | 'date';
+  | 'textarea';
 
 export type VoteLifecycleStatus =
   | 'draft'
@@ -77,13 +61,7 @@ export type VerificationProvider = 'valera' | 'eudi' | 'wallet' | 'custom';
 
 export type VerificationStepStatus = 'pending' | 'in_progress' | 'done' | 'failed';
 
-export type SurveySortOption =
-  | 'reward_desc'
-  | 'reward_asc'
-  | 'closing_soon'
-  | 'newest'
-  | 'responses_desc'
-  | 'relevance';
+export type SortKey = "rewardDesc" | "rewardAsc" | "nameAsc";
 
 export type CreatorAction =
   | 'manage'
@@ -127,7 +105,6 @@ export interface SurveyTag {
 export interface SurveyCategory {
   id: ID;
   label: string;
-  slug?: string;
 }
 
 export interface SurveyBadge {
@@ -142,13 +119,10 @@ export interface SurveyBadge {
     | 'primary';
 }
 
-export interface SurveyRequirement {
+export interface SurveyRequirement { //
   id: ID;
   type: RequirementType;
-  label: string;
   value: string;
-  operator?: 'eq' | 'neq' | 'gte' | 'lte' | 'between' | 'in';
-  isOptional?: boolean;
 }
 
 export interface EligibilityCheckResult {
@@ -218,16 +192,12 @@ export interface SurveyQuestionValidation {
   maxValue?: number;
 }
 
-export interface SurveyQuestion {
+export interface SurveyQuestion { //
   id: ID;
-  surveyId: ID;
   order: number;
   type: QuestionType;
   title: string;
-  description?: string;
-  placeholder?: string;
   options?: SurveyQuestionOption[];
-  validation?: SurveyQuestionValidation;
   isRequired: boolean;
 }
 
@@ -305,7 +275,7 @@ export interface SurveySummary {
   creatorDisplayName?: string;
 }
 
-export interface SurveyCard extends SurveySummary {
+export interface SurveyCardData extends SurveySummary {
   listVariant: SurveyListVariant;
   primaryActionLabel?: string;
   primaryAction?: CreatorAction | 'vote' | 'continue' | 'details';
@@ -335,66 +305,32 @@ export interface SurveyResultDetail extends SurveySummary {
 /* creation flow models               */
 /* ---------------------------------- */
 
-export interface SurveyDetailsDraft {
-  title: string;
+export interface SurveyDraft { //
+  name: string;
   description: string;
-  startAt?: ISODateString;
-  endAt?: ISODateString;
-  categories: SurveyCategory[];
-  tags?: SurveyTag[];
-}
-
-export interface SurveyQuestionsDraft {
+  startDate: string | null; // ISO string
+  endDate: string | null; // ISO string
+  tags: string[];
+  category: string;
   questions: SurveyQuestion[];
-}
-
-export interface SurveyRequirementsDraft {
   requirements: SurveyRequirement[];
+  rewardPerVoter: number | null;
+  voterCap: number | null;
 }
 
-export interface SurveyBudgetDraft {
-  rewardPerVoter?: Money;
-  paidCap?: number;
-  rewardPool?: Money;
-  platformFee?: Money;
-  totalCost?: Money;
-  anonymityMode?: boolean;
-}
-
-export interface SurveyDraft {
-  id?: ID;
-  details: SurveyDetailsDraft;
-  questions: SurveyQuestionsDraft;
-  requirements: SurveyRequirementsDraft;
-  budget: SurveyBudgetDraft;
-  status: Extract<SurveyStatus, 'draft' | 'scheduled' | 'live'>;
-  lastSavedAt?: ISODateString;
-}
-
-/* ---------------------------------- */
-/* explore / filter / search models   */
-/* ---------------------------------- */
-
-export interface SurveyFilterState {
-  query?: string;
-  categoryIds?: ID[];
-  rewardMin?: number;
-  openOnly?: boolean;
-  sortBy?: SurveySortOption;
-}
-
-export interface ActiveFilterChip {
-  id: ID;
-  label: string;
-  field: keyof SurveyFilterState | string;
-}
-
-export interface ExploreSurveyList {
-  items: SurveyCard[];
-  totalCount: number;
-  filters: SurveyFilterState;
-  activeFilterChips: ActiveFilterChip[];
-}
+export interface CreatedSurveyCardData { //
+    id: string;
+    title: string;
+    category: string;
+    status: SurveyStatus;
+    rewardPerVoter?: number;
+    endsAt?: string | null;
+    responsesCurrent?: number;
+    responsesTarget?: number;
+    spent?: number;
+    budget?: number;
+    totalSpent?: number;
+};
 
 /* ---------------------------------- */
 /* vote / participation models        */
@@ -468,15 +404,14 @@ export interface VoteHistoryItem {
   note?: string;
 }
 
-export interface ParticipatedSurveySummary {
-  surveyId: ID;
+export interface ParticipatedSurveySummary { //
+  id: string;
   title: string;
-  categoryLabel?: string;
+  category: string;
   votedAt: ISODateString;
   rewardStatus: RewardStatus;
   reward?: Money;
-  note?: string;
-}
+};
 
 export interface VoterDashboardStats {
   totalEarned?: Money;
@@ -521,5 +456,5 @@ export interface CreatorDashboardSection {
 export interface HomeDashboardData {
   activeSurvey?: CreatedSurveySummary;
   recentlyParticipated?: ParticipatedSurveySummary[];
-  availableForYou?: SurveyCard[];
+  availableForYou?: SurveyCardData[];
 }
