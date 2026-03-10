@@ -24,9 +24,27 @@ export const palette = {
     textSecondary: "#64748B",
     textMuted: "#94A3B8",
 
-    // Grey
-    greyBackground: "#64748b17",
-    greyBorder: "#64748B4D",
+    // Gray
+    grayBackground: "#64748b17",
+    grayBorder: "#64748B4D",
+
+    // Green
+    green: {
+        text: "#16A34A",
+        bgSoft: "#16a34a29",
+    },
+
+    // Blue
+    blue: {
+        text: "#2563EB",
+        bgSoft: "#2563eb29",
+    },
+
+    // Gray
+    gray: {
+        text: "#64748B",
+        bgSoft: "#64748b24",
+    },
 
     // Dark primary
     primaryDark: "#0F172A",

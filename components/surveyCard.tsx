@@ -25,11 +25,26 @@ type Props = {
 };
 
 const TAG_COLOR: Record<string, { bg: string; text: string }> = {
-    Health: { bg: "rgba(22, 163, 74, 0.16)", text: "#16A34A" },
-    Lifestyle: { bg: "rgba(37, 99, 235, 0.16)", text: "#2563EB" },
-    Finance: { bg: "rgba(100, 116, 139, 0.14)", text: "#64748B" },
-    Tech: { bg: "rgba(37, 99, 235, 0.16)", text: "#2563EB" },
-    Productivity: { bg: "rgba(100, 116, 139, 0.14)", text: "#64748B" },
+  Health: {
+    bg: palette.green.bgSoft,
+    text: palette.green.text,
+  },
+  Lifestyle: {
+    bg: palette.blue.bgSoft,
+    text: palette.blue.text,
+  },
+  Finance: {
+    bg: palette.gray.bgSoft,
+    text: palette.gray.text,
+  },
+  Tech: {
+    bg: palette.blue.bgSoft,
+    text: palette.blue.text,
+  },
+  Productivity: {
+    bg: palette.gray.bgSoft,
+    text: palette.gray.text,
+  },
 };
 
 export default function SurveyCard({ survey, onVote, voteLabel = "Vote" }: Props) {
@@ -45,8 +60,8 @@ export default function SurveyCard({ survey, onVote, voteLabel = "Vote" }: Props
             <View style={styles.tagRow}>
                 {survey.tags.map((tag) => {
                     const colors = TAG_COLOR[tag] ?? {
-                        bg: "rgba(100, 116, 139, 0.14)",
-                        text: "#64748B",
+                        bg: palette.gray.bgSoft,
+                        text: palette.gray.text,
                     };
                     return (
                         <View key={tag} style={[styles.tag, { backgroundColor: colors.bg }]}>
@@ -60,25 +75,25 @@ export default function SurveyCard({ survey, onVote, voteLabel = "Vote" }: Props
 
             <View style={styles.cardFooter}>
                 <View style={styles.metaRow}>
-                    <FontAwesome6 name="clock" size={13} color="#000000" />
+                    <FontAwesome6 name="clock" size={13} color={palette.black} />
                     <Text style={styles.metaText}>{survey.minutes} min</Text>
                 </View>
                 <View style={styles.metaRow}>
-                    <MaterialCommunityIcons name="account" size={16} color="#000000" />
+                    <MaterialCommunityIcons name="account" size={16} color={palette.black} />
                     <Text style={styles.metaText}>
                         {survey.participants}/{survey.participantsLimit}
                     </Text>
                 </View>
                 {survey.qualifies ? (
                     <View style={styles.metaRow}>
-                        <Feather name="check-circle" size={14} color="#16A34A" />
+                        <Feather name="check-circle" size={14} color={palette.success} />
                         <Text style={[styles.metaText, styles.metaTextPositive]}>
                             You qualify
                         </Text>
                     </View>
                 ) : (
                     <View style={styles.metaRow}>
-                        <Feather name="x-circle" size={14} color="#DC2626" />
+                        <Feather name="x-circle" size={14} color={palette.warning} />
                         <Text style={[styles.metaText, styles.metaTextNegative]}>
                             You do not qualify
                         </Text>
@@ -97,7 +112,7 @@ const styles = StyleSheet.create({
     card: {
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: palette.greyBorder,
+        borderColor: palette.grayBorder,
         padding: 16,
         backgroundColor: palette.white,
         gap: 12,
@@ -141,7 +156,7 @@ const styles = StyleSheet.create({
     },
     divider: {
         height: 1,
-        backgroundColor: palette.greyBackground,
+        backgroundColor: palette.grayBackground,
     },
     cardFooter: {
         flexDirection: "row",
