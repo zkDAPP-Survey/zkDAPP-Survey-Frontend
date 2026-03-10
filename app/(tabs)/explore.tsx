@@ -182,7 +182,7 @@ export default function Explore() {
             return filteredSurveys;
         }
         return filteredSurveys.filter((survey) =>
-            survey.categories.some((cat) => selectedCategory.includes(cat.id))
+            survey.categories.some((cat) => selectedCategory.includes(cat.label))
         );
     }, [filteredSurveys, selectedCategory]);
 
