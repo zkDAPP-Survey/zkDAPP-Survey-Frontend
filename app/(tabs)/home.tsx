@@ -12,7 +12,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import CompletedSurveyCard from "@/components/completedSurveyCard";
 import SurveyCard from "@/components/surveyCard";
-import { SurveyCardData } from "@/domain/models";
 import type { HomeDashboardData } from "@/domain/models";
 import { palette } from "@/theme/palette";
 
