@@ -4,6 +4,8 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import { palette } from "@/theme/palette";
+
 export type SurveyCardData = {
     id: string;
     name: string;
@@ -95,9 +97,9 @@ const styles = StyleSheet.create({
     card: {
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: "rgba(100, 116, 139, 0.2)",
+        borderColor: palette.greyBorder,
         padding: 16,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         gap: 12,
     },
     cardHeader: {
@@ -108,18 +110,18 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         flex: 1,
-        color: "#000000",
+        color: palette.black,
         fontSize: 29 / 2,
         fontWeight: "700",
         lineHeight: 22,
     },
     rewardText: {
-        color: "#16A34A",
+        color: palette.success,
         fontSize: 26 / 2,
         fontWeight: "700",
     },
     descriptionText: {
-        color: "#64748B",
+        color: palette.textSecondary,
         fontSize: 23 / 2,
         lineHeight: 20,
     },
@@ -139,7 +141,7 @@ const styles = StyleSheet.create({
     },
     divider: {
         height: 1,
-        backgroundColor: "rgba(100, 116, 139, 0.22)",
+        backgroundColor: palette.greyBackground,
     },
     cardFooter: {
         flexDirection: "row",
@@ -153,18 +155,18 @@ const styles = StyleSheet.create({
         gap: 5,
     },
     metaText: {
-        color: "#64748B",
+        color: palette.textSecondary,
         fontSize: 14,
     },
     metaTextPositive: {
-        color: "#16A34A",
+        color: palette.success,
     },
     metaTextNegative: {
-        color: "#DC2626",
+        color: palette.warning,
     },
     voteButton: {
         marginLeft: "auto",
-        backgroundColor: "#2563EB",
+        backgroundColor: palette.primary,
         borderRadius: 10,
         paddingHorizontal: 20,
         paddingVertical: 10,
@@ -172,7 +174,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     voteButtonText: {
-        color: "#FFFFFF",
+        color: palette.white,
         fontWeight: "700",
         fontSize: 16,
     },
