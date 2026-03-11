@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import CompletedSurveyCard from "@/components/completedSurveyCard";
-import SurveyCard, { type SurveyCardData } from "@/components/surveyCard";
+import SurveyCard from "@/components/surveyCard";
 import type { HomeDashboardData } from "@/domain/models";
 import { palette } from "@/theme/palette";
 
@@ -20,7 +20,7 @@ const HOME_DASHBOARD: HomeDashboardData = {
         id: "active-1",
         title: "Consumer Spending Habits Q1 2025",
         description: "Q1 consumer trends",
-        status: "live",
+        status: "active",
         categories: [{ id: "cat-finance", label: "Finance" }],
         progress: {
             responseCount: 247,
@@ -38,25 +38,25 @@ const HOME_DASHBOARD: HomeDashboardData = {
     },
     recentlyParticipated: [
         {
-            surveyId: "cp-1",
+            id: "cp-1",
             title: "Healthcare Access Study",
-            categoryLabel: "Medical",
+            category: "Medical",
             votedAt: "Mar 10",
             rewardStatus: "paid",
             reward: { amount: 2, currency: "USD" },
         },
         {
-            surveyId: "cp-2",
+            id: "cp-2",
             title: "Healthcare Access Study",
-            categoryLabel: "Medical",
+            category: "Medical",
             votedAt: "Mar 10",
             rewardStatus: "paid",
             reward: { amount: 2, currency: "USD" },
         },
         {
-            surveyId: "cp-3",
+            id: "cp-3",
             title: "Healthcare Access Study",
-            categoryLabel: "Medical",
+            category: "Medical",
             votedAt: "Mar 10",
             rewardStatus: "paid",
             reward: { amount: 2, currency: "USD" },
@@ -68,7 +68,7 @@ const HOME_DASHBOARD: HomeDashboardData = {
             title: "Prescription Drug Affordability",
             description:
                 "Share your experience with prescription costs and insurance coverage. Anonymous & secure.",
-            status: "live",
+            status: "active",
             categories: [
                 { id: "cat-health", label: "Health" },
                 { id: "cat-finance", label: "Finance" },
@@ -124,19 +124,7 @@ export default function Home() {
     const activeCategory = activeSurvey?.categories?.[0]?.label ?? "General";
     const activeClosesAt = activeSurvey?.timeInfo?.displayLabel ?? "-";
     const recentlyParticipated = HOME_DASHBOARD.recentlyParticipated ?? [];
-    const availableForYou: SurveyCardData[] = (HOME_DASHBOARD.availableForYou ?? []).map(
-        (survey) => ({
-            id: survey.id,
-            name: survey.title,
-            reward: survey.budget?.rewardPerVoter?.amount ?? 0,
-            description: survey.shortDescription ?? survey.description,
-            tags: survey.categories.map((item) => item.label),
-            minutes: survey.estimatedMinutes ?? 0,
-            participants: survey.progress?.responseCount ?? 0,
-            participantsLimit: survey.progress?.targetResponses ?? 0,
-            qualifies: survey.eligibility?.decision !== "not_qualified",
-        })
-    );
+    const availableForYou = HOME_DASHBOARD.availableForYou ?? []
     const progressPercent = Math.min(
         100,
         Math.max(0, Math.round((activeResponses / Math.max(activeTarget, 1)) * 100))
@@ -224,12 +212,12 @@ export default function Home() {
 
                 {recentlyParticipated.map((survey) => (
                     <CompletedSurveyCard
-                        key={survey.surveyId}
-                        id={survey.surveyId}
+                        key={survey.id}
+                        id={survey.id}
                         title={survey.title}
-                        category={survey.categoryLabel ?? "General"}
+                        category={survey.category ?? "General"}
                         date={survey.votedAt}
-                        reward={survey.reward?.amount}
+                        reward={survey.reward}
                     />
                 ))}
 

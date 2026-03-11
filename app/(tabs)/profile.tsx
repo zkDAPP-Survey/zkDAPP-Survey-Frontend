@@ -50,7 +50,7 @@ export default function Profile() {
                 contentInsetAdjustmentBehavior="never"
             >
                 <View style={styles.profileCard}>
-                    <Text style={styles.profileName}>Tralalela</Text>
+                    <Text style={styles.profileName}>Tralalela Tralala</Text>
                     <View style={styles.walletRow}>
                         <Text style={styles.walletText}>0x3f4...e91c</Text>
                         <MaterialIcons name="content-copy" size={14} color={palette.white50} />

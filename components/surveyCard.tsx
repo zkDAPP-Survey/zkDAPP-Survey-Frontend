@@ -4,17 +4,9 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-export type SurveyCardData = {
-    id: string;
-    name: string;
-    reward: number;
-    description: string;
-    tags: string[];
-    minutes: number;
-    participants: number;
-    participantsLimit: number;
-    qualifies: boolean;
-};
+import { SurveyCardData } from "@/domain/models";
+
+import { palette } from "@/theme/palette";
 
 type Props = {
     survey: SurveyCardData;
@@ -23,32 +15,47 @@ type Props = {
 };
 
 const TAG_COLOR: Record<string, { bg: string; text: string }> = {
-    Health: { bg: "rgba(22, 163, 74, 0.16)", text: "#16A34A" },
-    Lifestyle: { bg: "rgba(37, 99, 235, 0.16)", text: "#2563EB" },
-    Finance: { bg: "rgba(100, 116, 139, 0.14)", text: "#64748B" },
-    Tech: { bg: "rgba(37, 99, 235, 0.16)", text: "#2563EB" },
-    Productivity: { bg: "rgba(100, 116, 139, 0.14)", text: "#64748B" },
+  Health: {
+    bg: palette.green.bgSoft,
+    text: palette.green.text,
+  },
+  Lifestyle: {
+    bg: palette.blue.bgSoft,
+    text: palette.blue.text,
+  },
+  Finance: {
+    bg: palette.gray.bgSoft,
+    text: palette.gray.text,
+  },
+  Tech: {
+    bg: palette.blue.bgSoft,
+    text: palette.blue.text,
+  },
+  Productivity: {
+    bg: palette.gray.bgSoft,
+    text: palette.gray.text,
+  },
 };
 
 export default function SurveyCard({ survey, onVote, voteLabel = "Vote" }: Props) {
     return (
         <View style={styles.card}>
             <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>{survey.name}</Text>
-                <Text style={styles.rewardText}>${survey.reward.toFixed(2)}</Text>
+                <Text style={styles.cardTitle}>{survey.title}</Text>
+                <Text style={styles.rewardText}>{survey.budget?.rewardPerVoter?.amount.toFixed(2) ?? "0.00"} {survey.budget?.rewardPerVoter?.currency ?? "USD"}</Text>
             </View>
 
             <Text style={styles.descriptionText}>{survey.description}</Text>
 
             <View style={styles.tagRow}>
-                {survey.tags.map((tag) => {
-                    const colors = TAG_COLOR[tag] ?? {
-                        bg: "rgba(100, 116, 139, 0.14)",
-                        text: "#64748B",
+                {survey.categories.map((cat) => {
+                    const colors = TAG_COLOR[cat.label] ?? {
+                        bg: palette.gray.bgSoft,
+                        text: palette.gray.text,
                     };
                     return (
-                        <View key={tag} style={[styles.tag, { backgroundColor: colors.bg }]}>
-                            <Text style={[styles.tagText, { color: colors.text }]}>{tag}</Text>
+                        <View key={cat.id} style={[styles.tag, { backgroundColor: colors.bg }]}>
+                            <Text style={[styles.tagText, { color: colors.text }]}>{cat.label}</Text>
                         </View>
                     );
                 })}
@@ -58,25 +65,25 @@ export default function SurveyCard({ survey, onVote, voteLabel = "Vote" }: Props
 
             <View style={styles.cardFooter}>
                 <View style={styles.metaRow}>
-                    <FontAwesome6 name="clock" size={13} color="#000000" />
-                    <Text style={styles.metaText}>{survey.minutes} min</Text>
+                    <FontAwesome6 name="clock" size={13} color={palette.black} />
+                    <Text style={styles.metaText}>{survey.estimatedMinutes} min</Text>
                 </View>
                 <View style={styles.metaRow}>
-                    <MaterialCommunityIcons name="account" size={16} color="#000000" />
+                    <MaterialCommunityIcons name="account" size={16} color={palette.black} />
                     <Text style={styles.metaText}>
-                        {survey.participants}/{survey.participantsLimit}
+                        {survey.progress?.responseCount ?? 0}/{survey.progress?.targetResponses ?? 0}
                     </Text>
                 </View>
-                {survey.qualifies ? (
+                {survey.eligibility?.decision === "qualify" ? (
                     <View style={styles.metaRow}>
-                        <Feather name="check-circle" size={14} color="#16A34A" />
+                        <Feather name="check-circle" size={14} color={palette.success} />
                         <Text style={[styles.metaText, styles.metaTextPositive]}>
                             You qualify
                         </Text>
                     </View>
                 ) : (
                     <View style={styles.metaRow}>
-                        <Feather name="x-circle" size={14} color="#DC2626" />
+                        <Feather name="x-circle" size={14} color={palette.warning} />
                         <Text style={[styles.metaText, styles.metaTextNegative]}>
                             You do not qualify
                         </Text>
@@ -95,9 +102,9 @@ const styles = StyleSheet.create({
     card: {
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: "rgba(100, 116, 139, 0.2)",
+        borderColor: palette.grayBorder,
         padding: 16,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         gap: 12,
     },
     cardHeader: {
@@ -108,18 +115,18 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         flex: 1,
-        color: "#000000",
+        color: palette.black,
         fontSize: 29 / 2,
         fontWeight: "700",
         lineHeight: 22,
     },
     rewardText: {
-        color: "#16A34A",
+        color: palette.success,
         fontSize: 26 / 2,
         fontWeight: "700",
     },
     descriptionText: {
-        color: "#64748B",
+        color: palette.textSecondary,
         fontSize: 23 / 2,
         lineHeight: 20,
     },
@@ -139,7 +146,7 @@ const styles = StyleSheet.create({
     },
     divider: {
         height: 1,
-        backgroundColor: "rgba(100, 116, 139, 0.22)",
+        backgroundColor: palette.grayBackground,
     },
     cardFooter: {
         flexDirection: "row",
@@ -153,18 +160,18 @@ const styles = StyleSheet.create({
         gap: 5,
     },
     metaText: {
-        color: "#64748B",
+        color: palette.textSecondary,
         fontSize: 14,
     },
     metaTextPositive: {
-        color: "#16A34A",
+        color: palette.success,
     },
     metaTextNegative: {
-        color: "#DC2626",
+        color: palette.warning,
     },
     voteButton: {
         marginLeft: "auto",
-        backgroundColor: "#2563EB",
+        backgroundColor: palette.primary,
         borderRadius: 10,
         paddingHorizontal: 20,
         paddingVertical: 10,
@@ -172,7 +179,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     voteButtonText: {
-        color: "#FFFFFF",
+        color: palette.white,
         fontWeight: "700",
         fontSize: 16,
     },

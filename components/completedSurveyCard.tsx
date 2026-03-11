@@ -3,13 +3,14 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { palette } from "@/theme/palette";
+import { Money } from "@/domain/models";
 
 type Props = {
     id: string;
     title: string;
     category: string;
     date: string;
-    reward?: number | null;
+    reward?: Money | null;
 };
 
 export default function CompletedSurveyCard({
@@ -18,7 +19,7 @@ export default function CompletedSurveyCard({
     date,
     reward,
 }: Props) {
-    const isPaid = reward !== null && reward !== undefined && reward > 0;
+    const isPaid = reward !== null && reward !== undefined && reward.amount > 0;
 
     const handlePress = () => {};
 
@@ -38,7 +39,7 @@ export default function CompletedSurveyCard({
                     {isPaid ? (
                         <View style={styles.paidBadge}>
                             <Text style={styles.paidText}>
-                                Reward paid  +${reward.toFixed(2)}
+                                Reward paid  +{reward.amount.toFixed(2)} {reward.currency}
                             </Text>
                         </View>
                     ) : (

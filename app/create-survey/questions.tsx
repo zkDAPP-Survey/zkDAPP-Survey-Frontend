@@ -13,29 +13,32 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
+import { SurveyQuestion, QuestionType, SurveyQuestionOption } from "@/domain/models";
 import { palette } from "@/theme/palette";
 import { useSurveyDraft } from "@/utils/SurveyDraftContext";
 
-type QuestionType = "Single choice" | "Multiple choice" | "Paragraph";
-
-type Question = {
-    id: string;
-    title: string;
-    type: QuestionType;
-    required: boolean;
-    options: string[];
-};
-
-const TYPES: QuestionType[] = ["Single choice", "Multiple choice", "Paragraph"];
+const TYPES: QuestionType[] = ["multiple_choice", "single_choice", "textarea"];
 
 const makeId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-const makeQuestion = (overrides?: Partial<Question>): Question => ({
+const makeQuestion = (overrides?: Partial<SurveyQuestion>): SurveyQuestion => ({
     id: makeId(),
     title: "",
-    type: "Multiple choice",
-    required: true,
-    options: ["", "", ""],
+    order: 0,
+    type: "multiple_choice",
+    isRequired: true,
+    options: [
+        {
+            id: makeId(),
+            label: "",
+            order: 0,
+        },
+        {
+            id: makeId(),
+            label: "",
+            order: 1,
+        },
+    ],
     ...overrides,
 });
 
@@ -46,21 +49,21 @@ export default function QuestionsStep() {
         console.log("DRAFT on step 2:", draft);
     }, [draft]);
 
-    const [questions, setQuestions] = useState<Question[]>(
+    const [questions, setQuestions] = useState<SurveyQuestion[]>(
         draft.questions?.length
             ? draft.questions
             : [
                 makeQuestion(),
-                makeQuestion({ type: "Paragraph", required: false, options: [] }),
+                makeQuestion({ type: "textarea", isRequired: false, options: [] }),
             ]
     );
 
     const [openTypeMenuId, setOpenTypeMenuId] = useState<string | null>(null);
 
     const isChoiceType = (type: QuestionType) =>
-        type === "Single choice" || type === "Multiple choice";
+        type === "single_choice" || type === "multiple_choice";
 
-    const updateQuestion = (id: string, patch: Partial<Question>) => {
+    const updateQuestion = (id: string, patch: Partial<SurveyQuestion>) => {
         setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, ...patch } : q)));
     };
 
@@ -76,7 +79,7 @@ export default function QuestionsStep() {
             const copy = {
                 ...prev[idx],
                 id: makeId(),
-                options: [...prev[idx].options],
+                options: prev[idx].options?.map((o) => ({ ...o, id: makeId() })),
             };
             return [...prev.slice(0, idx + 1), copy, ...prev.slice(idx + 1)];
         });
@@ -87,14 +90,14 @@ export default function QuestionsStep() {
             prev.map((q) => {
                 if (q.id !== id) return q;
 
-                if (type === "Paragraph") {
+                if (type === "textarea") {
                     return { ...q, type, options: [] };
                 }
 
                 return {
                     ...q,
                     type,
-                    options: q.options?.length ? q.options : ["", ""],
+                    options: q.options?.length ? q.options : [{ id: makeId(), label: "", order: 0 }, { id: makeId(), label: "", order: 1 }],
                 };
             })
         );
@@ -105,8 +108,8 @@ export default function QuestionsStep() {
         setQuestions((prev) =>
             prev.map((q) => {
                 if (q.id !== qid) return q;
-                const options = [...q.options];
-                options[index] = value;
+                const options = q.options ? [...q.options] : [];
+                options[index] = { ...options[index], label: value };
                 return { ...q, options };
             })
         );
@@ -116,7 +119,7 @@ export default function QuestionsStep() {
         setQuestions((prev) =>
             prev.map((q) => {
                 if (q.id !== qid) return q;
-                return { ...q, options: [...q.options, ""] };
+                return { ...q, options: [...(q.options || []), { id: makeId(), label: "", order: q.options?.length || 0 }] };
             })
         );
     };
@@ -125,6 +128,7 @@ export default function QuestionsStep() {
         setQuestions((prev) =>
             prev.map((q) => {
                 if (q.id !== qid) return q;
+                if (!q.options) return q;
                 if (q.options.length <= 2) return q;
 
                 const next = q.options.filter((_, i) => i !== index);
@@ -139,14 +143,14 @@ export default function QuestionsStep() {
         | "MIN_2_OPTIONS"
         | "OPTIONS_REQUIRED";
 
-    const getQuestionError = (q: Question): QuestionError => {
+    const getQuestionError = (q: SurveyQuestion): QuestionError => {
         const titleOk = q.title.trim().length > 0;
         if (!titleOk) return "TITLE_REQUIRED";
 
         if (!isChoiceType(q.type)) return null;
 
-        const trimmed = q.options.map((o) => o.trim());
-        if (trimmed.length < 2) return "MIN_2_OPTIONS";
+        const trimmed = q.options?.map((o) => o.label.trim());
+        if (!trimmed || trimmed.length < 2) return "MIN_2_OPTIONS";
         if (!trimmed.every((o) => o.length > 0)) return "OPTIONS_REQUIRED";
 
         return null;
@@ -164,12 +168,17 @@ export default function QuestionsStep() {
         setSubmitAttempted(true);
         if (!allQuestionsValid) return;
 
-        const cleaned = questions.map((q) => ({
+        const cleaned: SurveyQuestion[] = questions.map((q) => ({
             id: q.id,
+            order: q.order,
             title: q.title.trim(),
             type: q.type,
-            required: q.required,
-            options: isChoiceType(q.type) ? q.options.map((o) => o.trim()) : [],
+            isRequired: q.isRequired,
+            options: q.options?.map((o, i) => ({
+                id: o.id,
+                label: o.label.trim(),
+                order: i,
+            })),
         }));
 
         setDraft((p) => ({ ...p, questions: cleaned }));
@@ -299,18 +308,18 @@ export default function QuestionsStep() {
 
                                     {isChoiceType(q.type) && (
                                         <View style={{ marginTop: 14 }}>
-                                            {q.options.map((opt, i) => {
+                                            {q.options?.map((opt, i) => {
                                                 const optIsEmpty =
                                                     submitAttempted &&
                                                     isChoiceType(q.type) &&
-                                                    opt.trim().length === 0;
+                                                    opt.label.trim().length === 0;
 
                                                 return (
                                                     <View
                                                         key={`${q.id}-opt-${i}`}
                                                         style={styles.optionRow}
                                                     >
-                                                        {q.type === "Single choice" ? (
+                                                        {q.type === "single_choice" ? (
                                                             <View style={styles.radioDot} />
                                                         ) : (
                                                             <View style={styles.checkboxBox} />
@@ -318,7 +327,7 @@ export default function QuestionsStep() {
 
                                                         <View style={styles.optionBox}>
                                                             <TextInput
-                                                                value={opt}
+                                                                value={opt.label}
                                                                 onChangeText={(t) =>
                                                                     updateOption(q.id, i, t)
                                                                 }
@@ -358,7 +367,7 @@ export default function QuestionsStep() {
                                         </View>
                                     )}
 
-                                    {q.type === "Paragraph" && (
+                                    {q.type === "textarea" && (
                                         <View style={[styles.paragraphBox, { marginTop: 14 }]}>
                                             <Text style={styles.paragraphPlaceholder}>
                                                 Answer text (long) — no predefined options
@@ -406,9 +415,9 @@ export default function QuestionsStep() {
                                         <View style={styles.requiredRow}>
                                             <Text style={styles.requiredText}>Required</Text>
                                             <Switch
-                                                value={q.required}
+                                                value={q.isRequired}
                                                 onValueChange={(v) =>
-                                                    updateQuestion(q.id, { required: v })
+                                                    updateQuestion(q.id, { isRequired: v })
                                                 }
                                                 trackColor={{
                                                     false: "#E5E7EB",
