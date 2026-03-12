@@ -1,9 +1,12 @@
 export const palette = {
     background: "#FFFFFF",
     border: "#E2E8F0",
+    surfaceSoft: "#F8FAFF",
+    surfaceMuted: "#F1F5F9",
 
     // Primary - blue
     primary: "#2563EB",
+    primaryPressed: "#1D4ED8",
     primaryNegative: "#EFF6FF",
     primaryLight: "#BFDBFE",
 
@@ -14,6 +17,7 @@ export const palette = {
     // orange
     orange: "#EA580C",
     orangeLight: "#FFF7ED",
+    orangeBorder: "#FED7AA",
 
     //warning
     warning: "#DC2626",

@@ -490,7 +490,7 @@ export interface VoterDashboardStats {
 
 export interface CreatorRecentResponse {
   id: ID;
-  pseudonym: string; // e.g. "Anon #4821"
+  pseudonym: string;
   respondedAt: ISODateString;
   rewardStatus: RewardStatus;
   reward?: Money;

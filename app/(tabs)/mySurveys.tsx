@@ -144,7 +144,7 @@ export default function MySurveys() {
                     <CreatedSurveys
                         surveys={createdSurveys}
                         onCreateNew={() => {router.push("/create-survey")}}
-                        onManage={() => {}}
+                        onManage={(id) => {router.push(`/survey/manage/${id}`)}}
                         onEdit={() => {}}
                         onResults={() => {}}
                     />
