@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import CreatedSurveys from "@/app/survey/createdSurveys";
-import ParticipatedSurveys, { Survey } from "@/app/survey/participatedSurveys";
-import { CreatedSurveyCardData } from "@/components/createdSurveyCard";
+import ParticipatedSurveys from "@/app/survey/participatedSurveys";
+import { ParticipatedSurveySummary } from "@/domain/models";
+import { CreatedSurveyCardData } from "@/domain/models";
 import { palette } from "@/theme/palette";
 import { router, useLocalSearchParams } from "expo-router";
 
@@ -85,13 +86,13 @@ export default function MySurveys() {
         },
     ];
 
-    const participatedSurveys: Survey[] = [
-        { id: "1", title: "Healthcare Access Study", category: "Medical", date: "Mar 10", reward: 2.0 },
-        { id: "2", title: "AI Product Attitudes", category: "Technology", date: "Mar 8", reward: 1.5 },
-        { id: "3", title: "Eco-Conscious Buying", category: "Environment", date: "Mar 6", reward: 0 },
-        { id: "4", title: "Public Transit Feedback", category: "Civic", date: "Mar 4", reward: 0.8 },
-        { id: "5", title: "Crypto Wallet UX", category: "Technology", date: "Mar 2", reward: 1.2 },
-        { id: "6", title: "Healthy Eating Habits", category: "Lifestyle", date: "Feb 28", reward: 0 },
+    const participatedSurveys: ParticipatedSurveySummary[] = [
+        { id: "1", title: "Healthcare Access Study", category: "Medical", votedAt: "Mar 10", rewardStatus: "paid", reward: { amount: 2.0, currency: "USD" } },
+        { id: "2", title: "AI Product Attitudes", category: "Technology", votedAt: "Mar 8", rewardStatus: "paid", reward: { amount: 1.5, currency: "USD" } },
+        { id: "3", title: "Eco-Conscious Buying", category: "Environment", votedAt: "Mar 6", rewardStatus: "unpaid", reward: { amount: 0, currency: "USD" } },
+        { id: "4", title: "Public Transit Feedback", category: "Civic", votedAt: "Mar 4", rewardStatus: "paid", reward: { amount: 0.8, currency: "USD" } },
+        { id: "5", title: "Crypto Wallet UX", category: "Technology", votedAt: "Mar 2", rewardStatus: "paid", reward: { amount: 1.2, currency: "USD" } },
+        { id: "6", title: "Healthy Eating Habits", category: "Lifestyle", votedAt: "Feb 28", rewardStatus: "unpaid", reward: { amount: 0, currency: "USD" } },
     ];
 
     return (

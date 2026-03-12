@@ -2,7 +2,8 @@ import React, { useMemo } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-import CreatedSurveyCard, { CreatedSurveyCardData } from "@/components/createdSurveyCard";
+import CreatedSurveyCard from "@/components/createdSurveyCard";
+import { CreatedSurveyCardData } from "@/domain/models";
 import { palette } from "@/theme/palette";
 
 type Props = {

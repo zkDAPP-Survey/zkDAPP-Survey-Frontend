@@ -2,23 +2,9 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import { SurveyStatus, CreatedSurveyCardData } from "@/domain/models";
+
 import { palette } from "@/theme/palette";
-
-type Status = "active" | "draft" | "results";
-
-export type CreatedSurveyCardData = {
-    id: string;
-    title: string;
-    category: string;
-    status: Status;
-    rewardPerVoter?: number;
-    endsAt?: string | null;
-    responsesCurrent?: number;
-    responsesTarget?: number;
-    spent?: number;
-    budget?: number;
-    totalSpent?: number;
-};
 
 type Props = {
     survey: CreatedSurveyCardData;
@@ -61,7 +47,7 @@ function getProgress(current: number, target: number) {
     return Math.min(1, Math.max(0, current / safeTarget));
 }
 
-function getStatusDisplay(status: Status): StatusDisplay {
+function getStatusDisplay(status: SurveyStatus): StatusDisplay {
     if (status === "active") {
         return {
             text: "Live",
@@ -88,23 +74,23 @@ function getStatusDisplay(status: Status): StatusDisplay {
     };
 }
 
-function getSubtitle(status: Status, endsAt?: string | null) {
+function getSubtitle(status: SurveyStatus, endsAt?: string | null) {
     if (status === "active") return `Closes on ${endsAt ?? "-"}`;
     if (status === "draft") return "Not published";
     return `Ended on ${endsAt ?? "-"}`;
 }
 
-function getProgressLabel(status: Status) {
+function getProgressLabel(status: SurveyStatus) {
     return status === "results" ? "Final responses" : "Responses";
 }
 
-function getProgressColor(status: Status) {
+function getProgressColor(status: SurveyStatus) {
     if (status === "active") return palette.primary;
     if (status === "draft") return palette.border;
     return palette.success;
 }
 
-function getMetric(status: Status, spent: number, budget: number, totalSpent: number): MetricConfig {
+function getMetric(status: SurveyStatus, spent: number, budget: number, totalSpent: number): MetricConfig {
     if (status === "results") {
         return { label: "Total spent", value: formatWholeDollars(totalSpent) };
     }
@@ -117,7 +103,7 @@ function getMetric(status: Status, spent: number, budget: number, totalSpent: nu
 }
 
 function getAction(
-    status: Status,
+    status: SurveyStatus,
     id: string,
     onManage: Props["onManage"],
     onEdit: Props["onEdit"],

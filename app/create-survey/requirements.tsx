@@ -12,16 +12,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
+import { SurveyRequirement, RequirementType } from "@/domain/models";
 import { palette } from "@/theme/palette";
 import { useSurveyDraft } from "@/utils/SurveyDraftContext";
 
-type RequirementType = "Age" | "Location" | "Education level" | "";
-
-type Requirement = {
-    id: string;
-    type: RequirementType;
-    value: string;
-};
 
 const TYPES: RequirementType[] = ["Age", "Location", "Education level"];
 
@@ -131,7 +125,7 @@ function RequirementDropdown({
 export default function RequirementsStep() {
     const { draft, setDraft } = useSurveyDraft();
 
-    const initialRequirements = useMemo<Requirement[]>(() => {
+    const initialRequirements = useMemo<SurveyRequirement[]>(() => {
         if (draft.requirements?.length) {
             return draft.requirements.map((r) => ({
                 id: r.id,
@@ -147,7 +141,7 @@ export default function RequirementsStep() {
         ];
     }, [draft.requirements]);
 
-    const [requirements, setRequirements] = useState<Requirement[]>(initialRequirements);
+    const [requirements, setRequirements] = useState<SurveyRequirement[]>(initialRequirements);
     const [submitAttempted, setSubmitAttempted] = useState(false);
     const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
@@ -165,7 +159,7 @@ export default function RequirementsStep() {
         });
     };
 
-    const updateReq = (id: string, patch: Partial<Requirement>) => {
+    const updateReq = (id: string, patch: Partial<SurveyRequirement>) => {
         setRequirements((prev) =>
             prev.map((r) => (r.id === id ? { ...r, ...patch } : r))
         );
@@ -187,7 +181,7 @@ export default function RequirementsStep() {
         ]);
     };
 
-    const getReqError = (r: Requirement): string | null => {
+    const getReqError = (r: SurveyRequirement): string | null => {
         if (!r.type.trim()) return "Requirement is required.";
         if (!r.value.trim()) return "Value is required for this requirement.";
         return null;
@@ -204,10 +198,10 @@ export default function RequirementsStep() {
         setSubmitAttempted(true);
         if (!allReqsValid) return;
 
-        const cleaned = requirements
+        const cleaned: SurveyRequirement[] = requirements
             .map((r) => ({
                 id: r.id,
-                type: r.type.trim(),
+                type: r.type.trim() as Exclude<RequirementType, "">,
                 value: r.value.trim(),
             }))
             .filter((r) => r.type.length > 0);

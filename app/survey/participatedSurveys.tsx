@@ -3,16 +3,10 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import CompletedSurveyCard from "@/components/completedSurveyCard";
 import { palette } from "@/theme/palette";
 
-export type Survey = {
-    id: string;
-    title: string;
-    category: string;
-    date: string;
-    reward?: number | null;
-};
+import { ParticipatedSurveySummary } from "@/domain/models";
 
 type Props = {
-    surveys: Survey[];
+    surveys: ParticipatedSurveySummary[];
 };
 
 function formatMoney(amount: number) {
@@ -26,9 +20,9 @@ export default function ParticipatedSurveys({ surveys }: Props) {
 
         for (const s of surveys) {
             const r = s.reward;
-            const isPaid = r !== null && r !== undefined && r > 0;
+            const isPaid = r !== null && r !== undefined && r.amount > 0;
 
-            if (isPaid) earned += r as number;
+            if (isPaid) earned += r.amount;
             else unpaid += 1;
         }
 
@@ -75,8 +69,8 @@ export default function ParticipatedSurveys({ surveys }: Props) {
                         id={item.id}
                         title={item.title}
                         category={item.category}
-                        date={item.date}
-                        reward={item.reward}
+                        date={item.votedAt}
+                        reward={item.reward?.amount ? { amount: item.reward.amount, currency: item.reward.currency } : undefined}
                     />
                 )}
                 showsVerticalScrollIndicator={false}
