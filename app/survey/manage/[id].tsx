@@ -33,7 +33,7 @@ const MANAGE_SURVEY_MOCK: Record<string, ManageSurveyRecord> = {
       id: "c1",
       title: "Consumer Spending Habits Q1 2025",
       description: "Finance behavior survey for Q1 2025.",
-      status: "live",
+      status: "active",
       categories: [{ id: "cat-finance", label: "Finance" }],
       budget: {
         rewardPerVoter: { amount: 1, currency: "USD" },
@@ -53,14 +53,12 @@ const MANAGE_SURVEY_MOCK: Record<string, ManageSurveyRecord> = {
       requirements: [
         {
           id: "req-1",
-          type: "age",
-          label: "Age",
+          type: "Age",
           value: "25-54",
         },
         {
           id: "req-2",
-          type: "location",
-          label: "Location",
+          type: "Location",
           value: "SK",
         },
       ],
@@ -102,12 +100,12 @@ const MANAGE_SURVEY_MOCK: Record<string, ManageSurveyRecord> = {
       id: "c2",
       title: "AI Product Attitudes",
       description: "Track user trust and adoption across AI features.",
-      status: "live",
+      status: "active",
       categories: [{ id: "cat-tech", label: "Technology" }],
       budget: {
         rewardPerVoter: { amount: 1.5, currency: "USD" },
         paidCap: 150,
-        remainingBudget: { amount: 81, currency: "USD" },
+        remainingBudget: { amount: 104, currency: "USD" },
       },
       progress: {
         responseCount: 96,
@@ -122,14 +120,12 @@ const MANAGE_SURVEY_MOCK: Record<string, ManageSurveyRecord> = {
       requirements: [
         {
           id: "req-3",
-          type: "age",
-          label: "Age",
+          type: "Age",
           value: "18-45",
         },
         {
           id: "req-4",
-          type: "location",
-          label: "Location",
+          type: "Location",
           value: "US",
         },
       ],
@@ -172,7 +168,7 @@ function getRelativeMinutes(isoDate: string) {
 }
 
 function buildRequirements(requirements: SurveyRequirement[] = []) {
-  return requirements.map((item) => `${item.label} ${item.value}`);
+  return requirements.map((item) => `${item.type} ${item.value}`);
 }
 
 function getResponseRewardLabel(response: CreatorRecentResponse) {

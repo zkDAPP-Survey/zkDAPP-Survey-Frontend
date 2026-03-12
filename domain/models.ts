@@ -27,6 +27,16 @@ export type EligibilityDecision =
   | "unknown"
   | "already_voted"
   | "verification_required";
+export type CreatorAction =
+  | 'manage'
+  | 'edit'
+  | 'publish'
+  | 'pause'
+  | 'resume'
+  | 'end'
+  | 'share'
+  | 'export_csv'
+  | 'view_results';
 
 export interface Money {
   amount: number;
@@ -67,14 +77,25 @@ export interface SurveyQuestion {
 
 export interface SurveyBudget {
   rewardPerVoter?: Money;
+  paidCap?: number;
+  remainingBudget?: Money;
 }
 
 export interface SurveyProgress {
   responseCount?: number;
+  paidResponseCount?: number;
   targetResponses?: number;
+  paidCap?: number;
+  paidSlotsLeft?: number;
+  progressPercent?: number;
 }
 
 export interface SurveyTimeInfo {
+  opensAt?: ISODateString;
+  closesAt?: ISODateString;
+  closedAt?: ISODateString;
+  isOpen?: boolean;
+  daysRemaining?: number;
   displayLabel?: string;
 }
 
@@ -98,12 +119,26 @@ export interface SurveySummary {
   eligibility?: EligibilityCheckResult;
   estimatedMinutes?: number;
   timeInfo?: SurveyTimeInfo;
+  requirements?: SurveyRequirement[];
 }
 
 export interface SurveyCardData extends SurveySummary {
   listVariant: SurveyListVariant;
   primaryActionLabel?: string;
   primaryAction?: "vote" | "continue" | "details";
+}
+
+export interface SurveyDetail extends SurveySummary {
+  questions?: SurveyQuestion[];
+  canParticipate?: boolean;
+  hasVoted?: boolean;
+  rewardStatus?: RewardStatus;
+  voterMessage?: string;
+}
+
+export interface SurveyManageDetail extends SurveyDetail {
+  recentResponses?: CreatorRecentResponse[];
+  allowedActions?: CreatorAction[];
 }
 
 export interface SurveyDraft {
@@ -138,6 +173,14 @@ export interface ParticipatedSurveySummary {
   title: string;
   category: string;
   votedAt: ISODateString;
+  rewardStatus: RewardStatus;
+  reward?: Money;
+}
+
+export interface CreatorRecentResponse {
+  id: ID;
+  pseudonym: string;
+  respondedAt: ISODateString;
   rewardStatus: RewardStatus;
   reward?: Money;
 }
