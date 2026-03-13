@@ -1,8 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { useState } from "react";
 import {
-    Alert,
-    Linking,
+    Modal,
     Pressable,
     ScrollView,
     StyleSheet,
@@ -12,35 +11,13 @@ import {
 } from "react-native";
 
 import { palette } from "@/theme/palette";
+import RequestBuilder from "@/components/RequestBuilder";
 
 export default function Profile() {
     const [newSurveysEnabled, setNewSurveysEnabled] = useState(true);
     const [rewardUpdatesEnabled, setRewardUpdatesEnabled] = useState(true);
     const [activityEnabled, setActivityEnabled] = useState(false);
-
-    const requestCredentialFromValera = async () => {
-        try {
-            const callbackUrl = 'zkdappsurveyfrontend://auth';
-            const valeraUrl = `asitplus-wallet://share?action=share&callback=${encodeURIComponent(callbackUrl)}&type=AgeVerification`;
-            
-            const canOpen = await Linking.canOpenURL(valeraUrl);
-            
-            if (!canOpen) {
-                Alert.alert(
-                    'Valera Not Installed',
-                    'Valera wallet is not installed or not properly configured on this device.',
-                    [{ text: 'OK' }]
-                );
-                return;
-            }
-            
-            await Linking.openURL(valeraUrl);
-            
-        } catch (error: any) {
-            console.error('Error requesting credential from Valera:', error);
-            Alert.alert('Error', 'Failed to open Valera wallet: ' + (error?.message || 'Unknown error'));
-        }
-    };
+    const [showRequestBuilder, setShowRequestBuilder] = useState(false);
 
     return (
             <ScrollView
@@ -65,10 +42,6 @@ export default function Profile() {
                         </View>
                     </View>
                 </View>
-
-                <Pressable style={styles.valeraButton} onPress={requestCredentialFromValera}>
-                    <Text style={styles.valeraButtonText}>Request Credential from Valera</Text>
-                </Pressable>
 
                 <Text style={styles.sectionLabel}>Account</Text>
                 <View style={styles.card}>
@@ -117,6 +90,26 @@ export default function Profile() {
                     <SettingRow title="Help Center" withBorder />
                     <SettingRow title="Rate the App" />
                 </View>
+
+                <Text style={styles.sectionLabel}>Test Tools</Text>
+                <View style={styles.card}>
+                    <Pressable
+                        style={[styles.row, styles.testToolRow]}
+                        onPress={() => setShowRequestBuilder(true)}
+                    >
+                        <Text style={styles.testToolText}>Open Request Builder</Text>
+                        <MaterialIcons name="chevron-right" size={20} color={palette.textMuted} />
+                    </Pressable>
+                </View>
+
+                <Modal
+                    visible={showRequestBuilder}
+                    animationType="slide"
+                    presentationStyle="formSheet"
+                    onRequestClose={() => setShowRequestBuilder(false)}
+                >
+                    <RequestBuilder onClose={() => setShowRequestBuilder(false)} />
+                </Modal>
             </ScrollView>
     );
 }
@@ -235,18 +228,6 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontWeight: "700",
     },
-    valeraButton: {
-        backgroundColor: palette.primary,
-        borderRadius: 12,
-        paddingVertical: 12,
-        alignItems: "center",
-        marginBottom: 14,
-    },
-    valeraButtonText: {
-        color: palette.white,
-        fontSize: 13,
-        fontWeight: "700",
-    },
     sectionLabel: {
         color: palette.textMuted,
         fontSize: 12,
@@ -288,5 +269,14 @@ const styles = StyleSheet.create({
         color: palette.textMuted,
         fontSize: 12,
         fontWeight: "500",
+    },
+    testToolRow: {
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    testToolText: {
+        color: palette.primaryDark,
+        fontSize: 15,
+        fontWeight: '600',
     },
 });
