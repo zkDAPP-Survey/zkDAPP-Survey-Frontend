@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { Stack, useRouter } from "expo-router";
 import * as Linking from 'expo-linking';
-
 export default function RootLayout() {
   const router = useRouter();
 

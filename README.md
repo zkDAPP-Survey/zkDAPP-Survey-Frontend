@@ -27,8 +27,10 @@ This app is built with Expo + React Native and currently includes a tab-based st
 ### 1. Install Dependencies
 
 ```bash
-npm install
+npm ci
 ```
+
+> **Note:** Use `npm ci` (not `npm install`) to install exactly from the lockfile. Running `npm install` followed by `npm audit fix` will break the dependency tree.
 
 ### 2. Configure Android SDK Path
 

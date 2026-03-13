@@ -126,23 +126,14 @@ export default function RequestBuilder({ onClose }: RequestBuilderProps) {
         requestId,
       )}&request=${encodeURIComponent(JSON.stringify(requestPayload))}`;
 
-      const canOpen = await Linking.canOpenURL(valeraUrl);
-
-      if (!canOpen) {
-        Alert.alert(
-          'Valera Not Installed',
-          'The Valera wallet app is not installed or not properly configured.',
-          [{ text: 'OK' }],
-        );
-        return;
-      }
-
       console.log('[RequestBuilder] Sending request to Valera:', {
         vct: credentialConfig.vct,
         requestedClaims: Array.from(state.selectedAttributes),
         requestId,
       });
 
+      // In some runtimes (Expo Go), canOpenURL may return false for custom schemes
+      // even though openURL still works. Try opening directly and only show error on failure.
       await Linking.openURL(valeraUrl);
 
       // Dismiss the modal so auth-callback screen is visible when Valera redirects back
@@ -354,9 +345,9 @@ function ReviewScreen({
           <Text style={styles.reviewLabel}>Attributes to Share</Text>
           <View>
             {selectedAttributeLabels.map((label, index) => (
-              <Text key={index} style={styles.reviewAttributeItem}>
-                • {label}
-              </Text>
+              <React.Fragment key={index}>
+                <Text style={styles.reviewAttributeItem}>• {label}</Text>
+              </React.Fragment>
             ))}
           </View>
         </View>
