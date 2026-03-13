@@ -17,7 +17,7 @@ import { palette } from "@/theme/palette";
 
 const HOME_DASHBOARD: HomeDashboardData = {
     activeSurvey: {
-        id: "active-1",
+        id: "c1",
         title: "Consumer Spending Habits Q1 2025",
         description: "Q1 consumer trends",
         status: "active",
@@ -189,10 +189,7 @@ export default function Home() {
                     <Pressable
                         style={styles.manageButton}
                         onPress={() =>
-                            router.push({
-                                pathname: "/(tabs)/mySurveys",
-                                params: { tab: "created" },
-                            })
+                            router.push(`/survey/manage/${activeSurvey?.id}`)
                         }
                     >
                         <Text style={styles.manageButtonText}>Manage Survey</Text>
