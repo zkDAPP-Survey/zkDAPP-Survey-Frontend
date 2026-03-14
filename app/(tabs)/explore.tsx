@@ -1,18 +1,378 @@
-import * as React from "react";
-import { Text, View } from "react-native";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import React, { useMemo, useState } from "react";
+import {
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+} from "react-native";
+
+import SurveyCard from "@/components/surveyCard";
+import { SurveyCardData, SortKey } from "@/domain/models";
+
+import { palette } from "@/theme/palette";
+
+
+const CATEGORIES = ["All", "Health", "Finance", "Tech", "Politics", "Lifestyle", "Productivity"];
+
+const SURVEYS: SurveyCardData[] = [
+  {
+    "id": "1",
+    "title": "Fitness App Usage Habits",
+    "description": "How often do you use fitness apps and what features matter most? 10-question study.",
+    "status": "active",
+    "categories": [
+      { "id": "health", "label": "Health" },
+      { "id": "lifestyle", "label": "Lifestyle" }
+    ],
+    "tags": [
+      { "id": "health", "label": "Health" },
+      { "id": "lifestyle", "label": "Lifestyle" }
+    ],
+    "estimatedMinutes": 5,
+    "eligibility": {
+      "decision": "qualify",
+      "matchedRequirements": [],
+      "failedRequirements": []
+    },
+    "budget": {
+      "rewardPerVoter": { "amount": 2, "currency": "USD" }
+    },
+    "progress": {
+      "responseCount": 88,
+      "targetResponses": 200
+    },
+    "listVariant": "explore",
+    "primaryAction": "vote",
+    "primaryActionLabel": "Start"
+  },
+  {
+    "id": "2",
+    "title": "Prescription Drug Affordability",
+    "description": "Share your experience with prescription costs and insurance coverage. Anonymous and secure.",
+    "status": "active",
+    "categories": [
+      { "id": "health", "label": "Health" },
+      { "id": "finance", "label": "Finance" }
+    ],
+    "tags": [
+      { "id": "health", "label": "Health" },
+      { "id": "finance", "label": "Finance" }
+    ],
+    "estimatedMinutes": 8,
+    "eligibility": {
+      "decision": "not_qualified",
+      "matchedRequirements": [],
+      "failedRequirements": []
+    },
+    "budget": {
+      "rewardPerVoter": { "amount": 3.5, "currency": "USD" }
+    },
+    "progress": {
+      "responseCount": 203,
+      "targetResponses": 400
+    },
+    "listVariant": "explore",
+    "primaryAction": "details",
+    "primaryActionLabel": "View"
+  },
+  {
+    "id": "3",
+    "title": "Remote Work Tool Preferences",
+    "description": "Help us compare productivity tools used by distributed teams across different industries.",
+    "status": "active",
+    "categories": [
+      { "id": "tech", "label": "Tech" },
+      { "id": "productivity", "label": "Productivity" }
+    ],
+    "tags": [
+      { "id": "tech", "label": "Tech" },
+      { "id": "productivity", "label": "Productivity" }
+    ],
+    "estimatedMinutes": 6,
+    "eligibility": {
+      "decision": "qualify",
+      "matchedRequirements": [],
+      "failedRequirements": []
+    },
+    "budget": {
+      "rewardPerVoter": { "amount": 1.25, "currency": "USD" }
+    },
+    "progress": {
+      "responseCount": 52,
+      "targetResponses": 180
+    },
+    "listVariant": "explore",
+    "primaryAction": "vote",
+    "primaryActionLabel": "Start"
+  },
+  {
+    "id": "4",
+    "title": "Personal Banking Mobile UX",
+    "description": "Tell us what works and what does not in your banking app experience over the last 3 months.",
+    "status": "active",
+    "categories": [
+      { "id": "finance", "label": "Finance" },
+      { "id": "tech", "label": "Tech" }
+    ],
+    "tags": [
+      { "id": "finance", "label": "Finance" },
+      { "id": "tech", "label": "Tech" }
+    ],
+    "estimatedMinutes": 7,
+    "eligibility": {
+      "decision": "qualify",
+      "matchedRequirements": [],
+      "failedRequirements": []
+    },
+    "budget": {
+      "rewardPerVoter": { "amount": 2.75, "currency": "USD" }
+    },
+    "progress": {
+      "responseCount": 119,
+      "targetResponses": 250
+    },
+    "listVariant": "explore",
+    "primaryAction": "vote",
+    "primaryActionLabel": "Start"
+  }
+];
+
+const SORT_LABELS: Record<SortKey, string> = {
+    rewardDesc: "Reward ↓",
+    rewardAsc: "Reward ↑",
+    nameAsc: "Name A-Z",
+};
+
+const SORT_KEYS: SortKey[] = ["rewardDesc", "rewardAsc", "nameAsc"];
 
 export default function Explore() {
+    const [query, setQuery] = useState("");
+    const [sortBy, setSortBy] = useState<SortKey>("rewardDesc");
+    const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+
+    const filteredSurveys = useMemo(() => {
+        const loweredQuery = query.trim().toLowerCase();
+
+        const searchFiltered = SURVEYS.filter((survey) =>
+            survey.title.toLowerCase().includes(loweredQuery)
+        );
+
+        return [...searchFiltered].sort((a, b) => {
+            if (sortBy === "rewardDesc") {
+                return (b.budget?.rewardPerVoter?.amount ?? 0) - (a.budget?.rewardPerVoter?.amount ?? 0);
+            }
+            if (sortBy === "rewardAsc") {
+                return (a.budget?.rewardPerVoter?.amount ?? 0) - (b.budget?.rewardPerVoter?.amount ?? 0);
+            }
+            return a.title.localeCompare(b.title);
+        });
+    }, [query, sortBy]);
+
+    const nextSort = () => {
+        const currentIndex = SORT_KEYS.indexOf(sortBy);
+        const nextIndex = (currentIndex + 1) % SORT_KEYS.length;
+        setSortBy(SORT_KEYS[nextIndex]);
+    };
+
+    const categoryFilteredSurveys = useMemo(() => {
+        if (selectedCategory.length === 0 || selectedCategory.includes("All")) {
+            return filteredSurveys;
+        }
+        return filteredSurveys.filter((survey) =>
+            survey.categories.some((cat) => selectedCategory.includes(cat.label))
+        );
+    }, [filteredSurveys, selectedCategory]);
+
+    const selectCategory = (category: string) => {
+        if (category === "All") {
+            setSelectedCategory(["All"]);
+            return;
+        }
+
+        if (selectedCategory.includes(category)) {
+            const newSelection = selectedCategory.filter((c) => c !== category);
+            setSelectedCategory(newSelection.length === 0 ? ["All"] : newSelection);
+        } else {
+            setSelectedCategory((prev) => [...prev.filter((c) => c !== "All"), category]);
+        }
+    };
+
     return (
-        <>
-            <View
-                style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
-                <Text>Explore Screen</Text>
+        <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
+            <View style={styles.searchRow}>
+                <View style={styles.searchBox}>
+                    <FontAwesome6
+                        name="magnifying-glass"
+                        size={16}
+                        color={palette.gray.text}
+                    />
+                    <TextInput
+                        value={query}
+                        onChangeText={setQuery}
+                        placeholder="Search by survey name"
+                        placeholderTextColor={palette.gray.text}
+                        style={styles.searchInput}
+                    />
+                </View>
+                <Pressable style={styles.filterButton}>
+                    <Text style={styles.filterButtonText}>Filter</Text>
+                </Pressable>
             </View>
-        </>
+
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.categoryRow}
+            >
+                {CATEGORIES.map((item) => (
+                    <View
+                        key={item}
+                        style={[styles.categoryChip, selectedCategory.includes(item) && styles.categoryChipActive]}
+                        onTouchStart={() => selectCategory(item)}
+                    >
+                        <Text
+                            style={[
+                                styles.categoryChipText,
+                                selectedCategory.includes(item) && styles.categoryChipTextActive,
+                            ]}
+                        >
+                            {item}
+                        </Text>
+                    </View>
+                ))}
+            </ScrollView>
+
+            <View style={styles.filterTagsRow}>
+                <Text style={styles.activeText}>Active:</Text>
+                <View style={styles.activeTag}>
+                    <Text style={styles.activeTagText}>Reward: $1+</Text>
+                </View>
+                <View style={styles.activeTag}>
+                    <Text style={styles.activeTagText}>Open only</Text>
+                </View>
+            </View>
+
+            <View style={styles.resultsRow}>
+                <Text style={styles.resultsText}>
+                    {categoryFilteredSurveys.length} survey{categoryFilteredSurveys.length === 1 ? "" : "s"} found
+                </Text>
+                <Pressable onPress={nextSort}>
+                    <Text style={styles.sortText}>Sort: {SORT_LABELS[sortBy]}</Text>
+                </Pressable>
+            </View>
+
+            {categoryFilteredSurveys.map((survey) => (
+                <SurveyCard key={survey.id} survey={survey} />
+            ))}
+        </ScrollView>
     );
 }
+
+const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: palette.white,
+    },
+    container: {
+        padding: 14,
+        paddingBottom: 28,
+        gap: 12,
+    },
+    searchRow: {
+        flexDirection: "row",
+        gap: 10,
+        alignItems: "center",
+    },
+    searchBox: {
+        flex: 1,
+        height: 44,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: palette.grayBorder,
+        backgroundColor: palette.grayBackground,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 14,
+        gap: 9,
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 15,
+        color: palette.black,
+    },
+    filterButton: {
+        height: 44,
+        borderRadius: 12,
+        backgroundColor: palette.primary,
+        paddingHorizontal: 18,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    filterButtonText: {
+        color: palette.white,
+        fontWeight: "600",
+        fontSize: 14,
+    },
+    categoryRow: {
+        gap: 9,
+        paddingVertical: 2,
+    },
+    categoryChip: {
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: palette.grayBorder,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        backgroundColor: palette.white,
+    },
+    categoryChipActive: {
+        backgroundColor: palette.primary,
+        borderColor: palette.primary,
+    },
+    categoryChipText: {
+        color: palette.textSecondary,
+        fontSize: 14,
+        fontWeight: "500",
+    },
+    categoryChipTextActive: {
+        color: palette.white,
+    },
+    filterTagsRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 8,
+    },
+    activeText: {
+        color: palette.textSecondary,
+        fontSize: 14,
+    },
+    activeTag: {
+        backgroundColor: palette.primaryNegative,
+        borderRadius: 9,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+    },
+    activeTagText: {
+        color: palette.primary,
+        fontSize: 13,
+        fontWeight: "500",
+    },
+    resultsRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    resultsText: {
+        color: palette.textSecondary,
+        fontSize: 17,
+    },
+    sortText: {
+        color: palette.primary,
+        fontSize: 15,
+        fontWeight: "600",
+    },
+});

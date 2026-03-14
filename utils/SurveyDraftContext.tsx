@@ -1,34 +1,5 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
-
-export type QuestionType = "Multiple choice" | "Paragraph";
-
-export type SurveyQuestion = {
-  id: string;
-  title: string;
-  type: QuestionType;
-  required: boolean;
-  options: string[];
-};
-
-export type SurveyDraft = {
-  
-  name: string;
-  description: string;
-  startDate: string | null; // ISO string
-  endDate: string | null; // ISO string
-  tags: string[];
-  category: string;
-  questions: SurveyQuestion[];
-  requirements: SurveyRequirement[];
-  rewardPerVoter: number | null;
-  voterCap: number | null;
-};
-
-export type SurveyRequirement = {
-  id: string;
-  type: string;
-  value: string;
-};
+import { SurveyDraft } from "@/domain/models";
 
 const defaultDraft: SurveyDraft = {
   name: "",
