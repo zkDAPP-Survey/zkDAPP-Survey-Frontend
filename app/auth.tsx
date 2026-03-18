@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 type CallbackData = {
@@ -33,7 +33,6 @@ export default function AuthCallbackScreen() {
   const [isProcessing, setIsProcessing] = useState(true);
   const [callbackData, setCallbackData] = useState<CallbackData | null>(null);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
-  const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasCallbackParams = Boolean(
     params.status || params.requestId || params.presentation || params.errorCode || params.credential,
   );
@@ -106,14 +105,6 @@ export default function AuthCallbackScreen() {
 
         setIsProcessing(false);
 
-        if (redirectTimeoutRef.current) {
-          clearTimeout(redirectTimeoutRef.current);
-        }
-
-        redirectTimeoutRef.current = setTimeout(() => {
-          router.replace('/(tabs)/home');
-        }, 3000);
-
       } catch (error) {
         console.error('Error processing authentication callback:', error);
         appendDebugLog(
@@ -124,13 +115,6 @@ export default function AuthCallbackScreen() {
     };
 
     handleAuthCallback();
-
-    return () => {
-      if (redirectTimeoutRef.current) {
-        clearTimeout(redirectTimeoutRef.current);
-        redirectTimeoutRef.current = null;
-      }
-    };
   }, [
     hasCallbackParams,
     params.status,
@@ -159,7 +143,7 @@ export default function AuthCallbackScreen() {
             <Text style={styles.text}>
               {callbackData?.status === 'error' ? 'Callback Error Received!' : 'Presentation Received!'}
             </Text>
-            <Text style={styles.subtext}>Redirecting to home...</Text>
+            <Text style={styles.subtext}>Review the response and press OK to continue.</Text>
 
             {callbackData && (
               <View style={styles.dataContainer}>
@@ -246,6 +230,13 @@ export default function AuthCallbackScreen() {
                 </View>
               </View>
             )}
+
+            <Pressable
+              style={({ pressed }) => [styles.okButton, pressed && styles.okButtonPressed]}
+              onPress={() => router.replace('/(tabs)/home')}
+            >
+              <Text style={styles.okButtonText}>OK</Text>
+            </Pressable>
           </>
         )}
       </View>
@@ -331,5 +322,20 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#333',
     fontFamily: 'monospace',
+  },
+  okButton: {
+    marginTop: 20,
+    backgroundColor: '#007AFF',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 28,
+  },
+  okButtonPressed: {
+    opacity: 0.85,
+  },
+  okButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
