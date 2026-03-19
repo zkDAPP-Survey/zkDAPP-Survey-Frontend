@@ -1,14 +1,3 @@
-/**
- * Credential Configuration for zkDAPP Survey App
- * 
- * This config defines:
- * - Available credential types (SD-JWT only for now)
- * - Their VCT identifiers (used in requests to Valera)
- * - Their ISO document types (used by Valera for credential matching)
- * - Available attributes for each type
- * - Default pre-selected attributes (matching Valera's defaults)
- */
-
 export type CredentialType = 'mdl' | 'pid' | 'health_id' | 'age_verification';
 
 export interface CredentialAttribute {
@@ -41,11 +30,8 @@ export const CREDENTIAL_TYPES: CredentialTypeConfig[] = [
       { id: 'family_name', label: 'Family Name', selected: true },
       { id: 'given_name', label: 'Given Name', selected: true },
       { id: 'birth_date', label: 'Birth Date', selected: true },
-      { id: 'age_over_18', label: 'Age Over 18', selected: false },
-      { id: 'age_over_21', label: 'Age Over 21', selected: false },
       { id: 'gender', label: 'Gender', selected: false },
       { id: 'nationality', label: 'Nationality', selected: false },
-      { id: 'resident_address', label: 'Resident Address', selected: false },
       { id: 'resident_city', label: 'Resident City', selected: false },
       { id: 'resident_postal_code', label: 'Resident Postal Code', selected: false },
       { id: 'resident_country', label: 'Resident Country', selected: false },
@@ -77,14 +63,11 @@ export const CREDENTIAL_TYPES: CredentialTypeConfig[] = [
       { id: 'age_over_13', label: 'Age Over 13', selected: false },
       { id: 'age_over_14', label: 'Age Over 14', selected: false },
       { id: 'age_over_16', label: 'Age Over 16', selected: false },
-      { id: 'age_over_18', label: 'Age Over 18', selected: false },
-      { id: 'age_over_21', label: 'Age Over 21', selected: false },
       { id: 'age_over_25', label: 'Age Over 25', selected: false },
       { id: 'height', label: 'Height', selected: false },
       { id: 'weight', label: 'Weight', selected: false },
       { id: 'eye_colour', label: 'Eye Colour', selected: false },
       { id: 'hair_colour', label: 'Hair Colour', selected: false },
-      { id: 'resident_address', label: 'Resident Address', selected: false },
       { id: 'resident_city', label: 'Resident City', selected: false },
       { id: 'resident_postal_code', label: 'Resident Postal Code', selected: false },
       { id: 'resident_country', label: 'Resident Country', selected: false },
@@ -124,8 +107,6 @@ export const CREDENTIAL_TYPES: CredentialTypeConfig[] = [
       { id: 'age_over_13', label: 'Age Over 13', selected: false },
       { id: 'age_over_14', label: 'Age Over 14', selected: false },
       { id: 'age_over_16', label: 'Age Over 16', selected: false },
-      { id: 'age_over_18', label: 'Age Over 18', selected: true },
-      { id: 'age_over_21', label: 'Age Over 21', selected: false },
       { id: 'age_over_25', label: 'Age Over 25', selected: false },
       { id: 'age_over_60', label: 'Age Over 60', selected: false },
       { id: 'age_over_62', label: 'Age Over 62', selected: false },

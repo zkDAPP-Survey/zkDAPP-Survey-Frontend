@@ -8,6 +8,7 @@ import {
   Alert,
   Linking,
   ActivityIndicator,
+  TextInput,
   Platform,
   StatusBar,
 } from 'react-native';
@@ -26,7 +27,23 @@ interface RequestBuilderState {
   step: RequestBuilderStep;
   selectedCredentialType: CredentialType | null;
   selectedAttributes: Set<string>;
+  voteMessage: string;
   isLoading: boolean;
+}
+
+function fnv1aHex(input: string): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < input.length; i += 1) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
+function createNonceChallenge(requestId: string, voteMessage: string, selectedClaims: string[]): string {
+  const canonicalClaims = [...selectedClaims].sort().join(',');
+  const payload = `${requestId}|${voteMessage.trim()}|${canonicalClaims}`;
+  return `nonce_challenge_${fnv1aHex(payload)}`;
 }
 
 interface RequestBuilderProps {
@@ -38,6 +55,7 @@ export default function RequestBuilder({ onClose }: RequestBuilderProps) {
     step: 'credential-type',
     selectedCredentialType: null,
     selectedAttributes: new Set(),
+    voteMessage: '',
     isLoading: false,
   });
 
@@ -80,6 +98,7 @@ export default function RequestBuilder({ onClose }: RequestBuilderProps) {
         step: 'credential-type',
         selectedCredentialType: null,
         selectedAttributes: new Set(),
+        voteMessage: '',
       });
     } else if (state.step === 'review') {
       setState({
@@ -100,10 +119,18 @@ export default function RequestBuilder({ onClose }: RequestBuilderProps) {
         throw new Error('Invalid credential type');
       }
 
-      const callbackUrl = 'zkdappsurveyfrontend://auth';
       const requestId = `req_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
-      const nonce = `nonce_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
+      const voteMessage = state.voteMessage.trim();
+      if (!voteMessage) {
+        throw new Error('Please type a message to bind into nonceChallenge.');
+      }
       const selectedClaims = Array.from(state.selectedAttributes);
+      const nonce = createNonceChallenge(requestId, voteMessage, selectedClaims);
+      const callbackUrl = `zkdappsurveyfrontend://auth?voteMessage=${encodeURIComponent(
+        voteMessage,
+      )}&requestedClaims=${encodeURIComponent(JSON.stringify(selectedClaims))}&nonceChallenge=${encodeURIComponent(
+        nonce,
+      )}`;
 
       const requestPayload = {
         version: '1.0',
@@ -131,6 +158,8 @@ export default function RequestBuilder({ onClose }: RequestBuilderProps) {
         vct: credentialConfig.vct,
         requestedClaims: selectedClaims,
         requestId,
+        nonceChallenge: nonce,
+        voteMessage,
       });
 
       // In some runtimes (Expo Go), canOpenURL may return false for custom schemes
@@ -188,6 +217,8 @@ export default function RequestBuilder({ onClose }: RequestBuilderProps) {
           <ReviewScreen
             credentialType={state.selectedCredentialType}
             selectedAttributes={state.selectedAttributes}
+            voteMessage={state.voteMessage}
+            onVoteMessageChange={(voteMessage) => setState({ ...state, voteMessage })}
           />
         )}
       </ScrollView>
@@ -225,11 +256,11 @@ export default function RequestBuilder({ onClose }: RequestBuilderProps) {
         {state.step === 'review' && (
           <Pressable
             onPress={handleSendRequest}
-            disabled={state.isLoading}
+            disabled={state.isLoading || state.voteMessage.trim().length === 0}
             style={({ pressed }) => [
               styles.button,
               styles.primaryButton,
-              (pressed || state.isLoading) && styles.buttonPressed,
+              (pressed || state.isLoading || state.voteMessage.trim().length === 0) && styles.buttonPressed,
             ]}
           >
             {state.isLoading ? (
@@ -317,9 +348,13 @@ function AttributeSelectionScreen({
 function ReviewScreen({
   credentialType,
   selectedAttributes,
+  voteMessage,
+  onVoteMessageChange,
 }: {
   credentialType: CredentialType;
   selectedAttributes: Set<string>;
+  voteMessage: string;
+  onVoteMessageChange: (value: string) => void;
 }) {
   const config = getCredentialTypeConfig(credentialType);
   if (!config) return null;
@@ -351,6 +386,19 @@ function ReviewScreen({
               </React.Fragment>
             ))}
           </View>
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.reviewSection}>
+          <Text style={styles.reviewLabel}>Vote Msg</Text>
+          <TextInput
+            value={voteMessage}
+            onChangeText={onVoteMessageChange}
+            placeholder="e.g. vote_option_2"
+            placeholderTextColor="#999"
+            style={styles.messageInput}
+          />
         </View>
 
         <View style={styles.divider} />
@@ -490,6 +538,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: palette.textPrimary,
     marginVertical: 4,
+  },
+  messageInput: {
+    borderWidth: 1,
+    borderColor: '#d8d8d8',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
+    color: '#222',
+    backgroundColor: '#fff',
   },
   divider: {
     height: 1,
