@@ -3,17 +3,412 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
+type JwtHeaderPayload = {
+  header: Record<string, unknown> | null;
+  payload: Record<string, unknown> | null;
+  signature: string;
+};
+
+type ParsedCircuitInput = {
+  requestedAttributes: string[];
+  voteMessage: string;
+  issuerSignature: string;
+  issuerPublicKey: string;
+  issuerAlg: string;
+  holderSignature: string;
+  holderPublicKey: string;
+  holderAlg: string;
+  requestedDisclosedClaims: Record<string, unknown>;
+};
+
 type CallbackData = {
   status: string;
   requestId: string;
   receivedAt: string;
-  presentation?: unknown;
+  parsedCircuitInput: ParsedCircuitInput;
   errorCode?: string;
   errorMessage?: string;
-  legacyCredential?: unknown;
-  legacyDid?: string;
-  legacyTimestamp?: string;
 };
+
+function parseStringArray(value?: string | null): string[] {
+  if (!value) return [];
+  const parsed = tryParseJson(value);
+  if (Array.isArray(parsed)) {
+    return parsed.map((entry) => String(entry)).filter((entry) => entry.trim().length > 0);
+  }
+  return [];
+}
+
+function decodeBase64Url(base64Url: string): string | null {
+  try {
+    const normalized = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
+    if (typeof atob !== 'function') return null;
+    return atob(padded);
+  } catch {
+    return null;
+  }
+}
+
+function tryDecodeJsonSegment(segment: string): Record<string, unknown> | null {
+  const decoded = decodeBase64Url(segment);
+  if (!decoded) return null;
+  try {
+    return JSON.parse(decoded) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+function parseJwt(jwt?: string | null): JwtHeaderPayload | null {
+  if (!jwt) return null;
+  const parts = jwt.split('.');
+  if (parts.length !== 3) return null;
+
+  return {
+    header: tryDecodeJsonSegment(parts[0]),
+    payload: tryDecodeJsonSegment(parts[1]),
+    signature: parts[2],
+  };
+}
+
+function toPublicKeyReference(parsedJwt: JwtHeaderPayload | null): string {
+  if (!parsedJwt) return '';
+
+  const header = parsedJwt.header ?? {};
+  const payload = parsedJwt.payload ?? {};
+
+  const jwkInHeader = header.jwk;
+  if (jwkInHeader && typeof jwkInHeader === 'object' && !Array.isArray(jwkInHeader)) {
+    return JSON.stringify(jwkInHeader);
+  }
+
+  const cnf = asObject(payload.cnf);
+  const jwkInCnf = cnf?.jwk;
+  if (jwkInCnf && typeof jwkInCnf === 'object' && !Array.isArray(jwkInCnf)) {
+    return JSON.stringify(jwkInCnf);
+  }
+
+  const kid = header.kid;
+  if (typeof kid === 'string' && kid.length > 0) {
+    return kid;
+  }
+
+  return '';
+}
+
+function toAlg(parsedJwt: JwtHeaderPayload | null): string {
+  const alg = parsedJwt?.header?.alg;
+  return typeof alg === 'string' ? alg : '';
+}
+
+function parseSdJwtPresentation(presentationRaw?: string | null): {
+  issuerJwt: string | null;
+  kbJwt: string | null;
+  disclosures: string[];
+} {
+  if (!presentationRaw || typeof presentationRaw !== 'string') {
+    return { issuerJwt: null, kbJwt: null, disclosures: [] };
+  }
+
+  const parts = presentationRaw.split('~').filter((part) => part.length > 0);
+  if (parts.length === 0) return { issuerJwt: null, kbJwt: null, disclosures: [] };
+
+  const issuerJwt = parts[0] || null;
+  const last = parts[parts.length - 1];
+  const looksLikeJwt = (last.match(/\./g) || []).length === 2;
+  const kbJwt = parts.length > 1 && looksLikeJwt ? last : null;
+  const disclosures = parts.slice(1, kbJwt ? -1 : undefined);
+
+  return { issuerJwt, kbJwt, disclosures };
+}
+
+function decodeDisclosure(disclosure: string): { claimName: string | null; claimValue: unknown } {
+  const decoded = decodeBase64Url(disclosure);
+  if (!decoded) return { claimName: null, claimValue: null };
+
+  try {
+    const parsed = JSON.parse(decoded);
+    if (!Array.isArray(parsed)) return { claimName: null, claimValue: parsed };
+
+    const claimName = typeof parsed[1] === 'string' ? parsed[1] : null;
+    const claimValue = parsed.length >= 3 ? parsed[2] : parsed[1];
+    return { claimName, claimValue };
+  } catch {
+    return { claimName: null, claimValue: decoded };
+  }
+}
+
+function asObject(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  return value as Record<string, unknown>;
+}
+
+function firstDefined<T>(values: (T | undefined | null)[]): T | undefined {
+  for (const value of values) {
+    if (value !== undefined && value !== null) return value;
+  }
+  return undefined;
+}
+
+function looksLikeDigestPlaceholder(value: unknown): boolean {
+  const obj = asObject(value);
+  if (!obj) return false;
+  const entries = Object.entries(obj);
+  if (entries.length !== 1) return false;
+  const [k, v] = entries[0];
+  return /^[A-Za-z0-9_-]{8,}$/.test(k) && typeof v === 'string' && /^[A-Za-z0-9_-]{8,}$/.test(v);
+}
+
+function parseJsonArrayString(value: string): unknown[] | null {
+  const trimmed = value.trim();
+  if (!(trimmed.startsWith('[') && trimmed.endsWith(']'))) return null;
+  try {
+    const parsed = JSON.parse(trimmed);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function extractFirstUsefulValue(value: unknown): unknown {
+  if (value === null || value === undefined) return undefined;
+  if (looksLikeDigestPlaceholder(value)) return undefined;
+
+  if (typeof value === 'string') {
+    const parsedArray = parseJsonArrayString(value);
+    if (parsedArray && parsedArray.length > 0) {
+      const nested = extractFirstUsefulValue(parsedArray[0]);
+      if (nested !== undefined && nested !== null) return nested;
+    }
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const nested = extractFirstUsefulValue(item);
+      if (nested !== undefined && nested !== null) return nested;
+    }
+    return undefined;
+  }
+
+  if (typeof value === 'object') {
+    const obj = value as Record<string, unknown>;
+    const preferredKeys = ['value', 'code', 'country', 'region', 'state', 'locality', 'formatted'];
+    for (const key of preferredKeys) {
+      const nested = extractFirstUsefulValue(obj[key]);
+      if (nested !== undefined && nested !== null) return nested;
+    }
+    return undefined;
+  }
+
+  return value;
+}
+
+function getRequestedClaimValue(
+  requestedAttribute: string,
+  disclosedClaims: Record<string, unknown>,
+  issuerPayload: Record<string, unknown> | null,
+): unknown {
+  const address =
+    asObject(disclosedClaims.address)
+    ?? asObject(disclosedClaims.resident_address)
+    ?? asObject(disclosedClaims.main_address);
+  const issuerAddress =
+    asObject(issuerPayload?.address)
+    ?? asObject(issuerPayload?.resident_address)
+    ?? asObject(issuerPayload?.main_address);
+
+  switch (requestedAttribute) {
+    case 'family_name':
+      return firstDefined([
+        disclosedClaims.family_name,
+        disclosedClaims.surname,
+        issuerPayload?.family_name,
+        issuerPayload?.surname,
+      ]);
+
+    case 'given_name':
+      return firstDefined([
+        disclosedClaims.given_name,
+        disclosedClaims.forename,
+        issuerPayload?.given_name,
+        issuerPayload?.forename,
+      ]);
+
+    case 'birth_date':
+      return firstDefined([
+        disclosedClaims.birth_date,
+        disclosedClaims.date_of_birth,
+        disclosedClaims.birthdate,
+        disclosedClaims.dob,
+        issuerPayload?.birth_date,
+        issuerPayload?.date_of_birth,
+      ]);
+
+    case 'issue_date':
+      return firstDefined([
+        disclosedClaims.issue_date,
+        disclosedClaims.issuance_date,
+        disclosedClaims.iat,
+        issuerPayload?.issue_date,
+        issuerPayload?.issuance_date,
+        issuerPayload?.iat,
+      ]);
+
+    case 'expiry_date':
+      return firstDefined([
+        disclosedClaims.expiry_date,
+        disclosedClaims.expiration_date,
+        disclosedClaims.exp,
+        issuerPayload?.expiry_date,
+        issuerPayload?.expiration_date,
+        issuerPayload?.exp,
+      ]);
+
+    case 'gender':
+      return firstDefined([
+        disclosedClaims.gender,
+        disclosedClaims.sex,
+        issuerPayload?.gender,
+        issuerPayload?.sex,
+      ]);
+
+    case 'nationality': {
+      const singularNationality = firstDefined([
+        disclosedClaims.nationality,
+        issuerPayload?.nationality,
+      ]);
+      const normalizedSingular = extractFirstUsefulValue(singularNationality);
+      if (normalizedSingular !== undefined && normalizedSingular !== null) {
+        return normalizedSingular;
+      }
+
+      const nationalities = firstDefined([
+        disclosedClaims.nationalities,
+        issuerPayload?.nationalities,
+      ]);
+      const normalizedPlural = extractFirstUsefulValue(nationalities);
+      if (normalizedPlural !== undefined && normalizedPlural !== null) {
+        return normalizedPlural;
+      }
+
+      return undefined;
+    }
+
+    case 'issuing_authority':
+      return firstDefined([
+        disclosedClaims.issuing_authority,
+        disclosedClaims.issuer,
+        issuerPayload?.issuing_authority,
+        issuerPayload?.issuer,
+      ]);
+
+    case 'issuing_country':
+      return firstDefined([
+        disclosedClaims.issuing_country,
+        issuerPayload?.issuing_country,
+      ]);
+
+    case 'resident_country':
+      return firstDefined([
+        disclosedClaims.resident_country,
+        disclosedClaims.country,
+        address?.country,
+        address?.country_code,
+        issuerPayload?.resident_country,
+        issuerPayload?.country,
+        issuerAddress?.country,
+        issuerAddress?.country_code,
+      ]);
+
+    case 'resident_city':
+      return firstDefined([
+        disclosedClaims.resident_city,
+        disclosedClaims.locality,
+        address?.locality,
+        address?.city,
+        address?.town,
+        issuerPayload?.resident_city,
+        issuerPayload?.locality,
+        issuerAddress?.locality,
+        issuerAddress?.city,
+        issuerAddress?.town,
+      ]);
+
+    case 'resident_postal_code':
+      return firstDefined([
+        disclosedClaims.resident_postal_code,
+        disclosedClaims.postal_code,
+        address?.postal_code,
+        address?.postalCode,
+        address?.zip,
+        issuerPayload?.resident_postal_code,
+        issuerPayload?.postal_code,
+        issuerAddress?.postal_code,
+        issuerAddress?.postalCode,
+        issuerAddress?.zip,
+      ]);
+
+    case 'resident_state':
+      return firstDefined([
+        disclosedClaims.resident_state,
+        disclosedClaims.region,
+        disclosedClaims.state,
+        disclosedClaims.province,
+        address?.region,
+        address?.state,
+        address?.province,
+        address?.subdivision,
+        address?.administrative_area,
+        issuerPayload?.resident_state,
+        issuerPayload?.region,
+        issuerPayload?.state,
+        issuerPayload?.province,
+        issuerAddress?.region,
+        issuerAddress?.state,
+        issuerAddress?.province,
+        issuerAddress?.subdivision,
+        issuerAddress?.administrative_area,
+      ]);
+
+    case 'resident_street':
+      return firstDefined([
+        disclosedClaims.resident_street,
+        address?.street_address,
+        address?.street,
+        address?.road,
+        issuerPayload?.resident_street,
+        issuerAddress?.street_address,
+        issuerAddress?.street,
+        issuerAddress?.road,
+      ]);
+
+    case 'resident_house_number':
+      return firstDefined([
+        disclosedClaims.resident_house_number,
+        address?.house_number,
+        issuerPayload?.resident_house_number,
+        issuerAddress?.house_number,
+      ]);
+
+    case 'resident_address':
+      return firstDefined([
+        disclosedClaims.resident_address,
+        address?.formatted,
+        address?.full_address,
+        issuerPayload?.resident_address,
+        issuerAddress?.formatted,
+        issuerAddress?.full_address,
+      ]);
+
+    default:
+      return firstDefined([
+        disclosedClaims[requestedAttribute],
+        issuerPayload?.[requestedAttribute],
+      ]);
+  }
+}
 
 function tryParseJson(value?: string | null) {
   if (!value) {
@@ -66,37 +461,59 @@ export default function AuthCallbackScreen() {
         const presentation = params.presentation as string | undefined;
         const errorCode = params.errorCode as string | undefined;
         const errorMessage = params.errorMessage as string | undefined;
+        const voteMessage = (params.voteMessage as string | undefined) || '';
+        const requestedClaimsRaw = params.requestedClaims as string | undefined;
+        const requestedAttributes = parseStringArray(requestedClaimsRaw);
 
-        const credential = params.credential as string;
-        const did = params.did as string;
-        const timestamp = params.timestamp as string;
+        const presentationRaw = typeof presentation === 'string' ? presentation : null;
+        const parsedSdJwt = parseSdJwtPresentation(presentationRaw);
+        const issuerJwtParsed = parseJwt(parsedSdJwt.issuerJwt);
+        const issuerPayload = asObject(issuerJwtParsed?.payload ?? null);
+        const kbJwtParsed = parseJwt(parsedSdJwt.kbJwt);
+        const decodedDisclosures = parsedSdJwt.disclosures.map(decodeDisclosure);
+        const disclosedClaims = decodedDisclosures.reduce<Record<string, unknown>>((acc, disclosureItem) => {
+          if (disclosureItem.claimName) {
+            acc[disclosureItem.claimName] = disclosureItem.claimValue;
+          }
+          return acc;
+        }, {});
+        const requestedDisclosedClaims = requestedAttributes.reduce<Record<string, unknown>>((acc, attribute) => {
+          const value = getRequestedClaimValue(attribute, disclosedClaims, issuerPayload);
+          // Always expose every requested attribute key; unresolved values are explicit null.
+          acc[attribute] = value ?? null;
+          return acc;
+        }, {});
 
-        const parsedCredential = tryParseJson(credential);
-        const parsedPresentation = tryParseJson(presentation);
-        const normalizedTimestamp = timestamp
-          ? new Date(parseInt(timestamp, 10)).toLocaleString()
-          : undefined;
+        const parsedCircuitInput: ParsedCircuitInput = {
+          requestedAttributes,
+          voteMessage,
+          // Signatures are the JWS signature segments from issuer JWT / key-binding JWT.
+          issuerSignature: issuerJwtParsed?.signature ?? '',
+          issuerPublicKey: toPublicKeyReference(issuerJwtParsed),
+          issuerAlg: toAlg(issuerJwtParsed),
+          holderSignature: kbJwtParsed?.signature ?? '',
+          holderPublicKey: toPublicKeyReference(kbJwtParsed),
+          holderAlg: toAlg(kbJwtParsed),
+          requestedDisclosedClaims,
+        };
 
         appendDebugLog(
-          `[AuthCallback] Processing callback params requestId=${requestId || 'N/A'} status=${status || 'unknown'} hasPresentation=${Boolean(presentation)} hasError=${Boolean(errorCode)}`,
+          `[AuthCallback] Processing callback params requestId=${requestId || 'N/A'} status=${status || 'unknown'} hasPresentation=${Boolean(presentation)} hasError=${Boolean(errorCode)} attrs=${requestedAttributes.length}`,
         );
 
         const receivedData: CallbackData = {
-          status: status || (parsedCredential ? 'legacy-success' : 'unknown'),
+          status: status || 'unknown',
           requestId: requestId || 'N/A',
           receivedAt: new Date().toLocaleString(),
-          presentation: parsedPresentation ?? undefined,
+          parsedCircuitInput,
           errorCode: errorCode || undefined,
           errorMessage: errorMessage || undefined,
-          legacyCredential: parsedCredential ?? undefined,
-          legacyDid: did || undefined,
-          legacyTimestamp: normalizedTimestamp,
         };
 
         appendDebugLog('CALLBACK SUCCESSFULLY RECEIVED FROM VALERA');
         appendDebugLog(`Status=${receivedData.status}`);
         appendDebugLog(`Request ID=${receivedData.requestId}`);
-        appendDebugLog(`Has presentation=${Boolean(receivedData.presentation)}`);
+        appendDebugLog(`Resolved requested claims=${Object.keys(requestedDisclosedClaims).length}`);
         appendDebugLog(`Error code=${receivedData.errorCode || 'N/A'}`);
 
         setCallbackData(receivedData);
@@ -120,6 +537,9 @@ export default function AuthCallbackScreen() {
     params.status,
     params.requestId,
     params.presentation,
+    params.voteMessage,
+    params.nonceChallenge,
+    params.requestedClaims,
     params.errorCode,
     params.errorMessage,
     params.credential,
@@ -164,6 +584,13 @@ export default function AuthCallbackScreen() {
                   <Text style={styles.dataValue}>{callbackData.receivedAt}</Text>
                 </View>
 
+                <Text style={styles.dataTitle}>Parsed Circuit Input</Text>
+                <View style={styles.credentialBox}>
+                  <Text style={styles.credentialText}>
+                    {JSON.stringify(callbackData.parsedCircuitInput, null, 2)}
+                  </Text>
+                </View>
+
                 {callbackData.errorCode && (
                   <View style={styles.dataRow}>
                     <Text style={styles.dataLabel}>Error Code:</Text>
@@ -176,44 +603,6 @@ export default function AuthCallbackScreen() {
                     <Text style={styles.dataLabel}>Error Message:</Text>
                     <Text style={styles.dataValue}>{callbackData.errorMessage}</Text>
                   </View>
-                )}
-
-                {Boolean(callbackData.presentation) && (
-                  <>
-                    <Text style={styles.dataTitle}>🔐 Presentation Payload:</Text>
-                    <View style={styles.credentialBox}>
-                      <Text style={styles.credentialText}>
-                        {typeof callbackData.presentation === 'string'
-                          ? callbackData.presentation
-                          : JSON.stringify(callbackData.presentation, null, 2)}
-                      </Text>
-                    </View>
-                  </>
-                )}
-
-                {Boolean(callbackData.legacyCredential) && (
-                  <>
-                    <Text style={styles.dataTitle}>🧪 Legacy Fallback Payload:</Text>
-                    {callbackData.legacyDid && (
-                      <View style={styles.dataRow}>
-                        <Text style={styles.dataLabel}>Legacy DID:</Text>
-                        <Text style={styles.dataValue}>{callbackData.legacyDid}</Text>
-                      </View>
-                    )}
-                    {callbackData.legacyTimestamp && (
-                      <View style={styles.dataRow}>
-                        <Text style={styles.dataLabel}>Legacy Timestamp:</Text>
-                        <Text style={styles.dataValue}>{callbackData.legacyTimestamp}</Text>
-                      </View>
-                    )}
-                    <View style={styles.credentialBox}>
-                      <Text style={styles.credentialText}>
-                        {typeof callbackData.legacyCredential === 'string'
-                          ? callbackData.legacyCredential
-                          : JSON.stringify(callbackData.legacyCredential, null, 2)}
-                      </Text>
-                    </View>
-                  </>
                 )}
               </View>
             )}
