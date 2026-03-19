@@ -11,7 +11,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { CreatedSurveyCardData } from "@/domain/models";
-import { palette } from "@/theme/palette"; 
+import { palette } from "@/theme/palette";
 
 type QuestionOption = {
     label: string;
@@ -61,10 +61,10 @@ const MOCK_RESULTS: Record<string, QuestionResult[]> = {
             questionNumber: 1,
             title: "How often do you check your monthly budget?",
             options: [
-                { label: "Weekly or more", percent: 41, count: 192, color: "#16A34A" },
-                { label: "Monthly", percent: 28, count: 131, color: "#2563EB" },
-                { label: "Rarely", percent: 19, count: 89, color: "#94A3B8" },
-                { label: "Never", percent: 12, count: 56, color: "#CBD5E1" },
+                { label: "Weekly or more", percent: 41, count: 192, color: palette.success },
+                { label: "Monthly", percent: 28, count: 131, color: palette.primary },
+                { label: "Rarely", percent: 19, count: 89, color: palette.textMuted },
+                { label: "Never", percent: 12, count: 56, color: palette.border },
             ],
         },
         {
@@ -72,10 +72,10 @@ const MOCK_RESULTS: Record<string, QuestionResult[]> = {
             questionNumber: 2,
             title: "Has remote work improved your work-life balance?",
             options: [
-                { label: "Yes, significantly", percent: 54, count: 253, color: "#16A34A" },
-                { label: "A little", percent: 24, count: 112, color: "#2563EB" },
-                { label: "Not really", percent: 14, count: 66, color: "#94A3B8" },
-                { label: "No", percent: 8, count: 37, color: "#CBD5E1" },
+                { label: "Yes, significantly", percent: 54, count: 253, color: palette.success },
+                { label: "A little", percent: 24, count: 112, color: palette.primary },
+                { label: "Not really", percent: 14, count: 66, color: palette.textMuted },
+                { label: "No", percent: 8, count: 37, color: palette.border },
             ],
         },
     ],
@@ -85,10 +85,10 @@ const MOCK_RESULTS: Record<string, QuestionResult[]> = {
             questionNumber: 1,
             title: "Do you feel productive working remotely?",
             options: [
-                { label: "Very productive", percent: 48, count: 144, color: "#16A34A" },
-                { label: "Somewhat productive", percent: 27, count: 81, color: "#2563EB" },
-                { label: "Neutral", percent: 15, count: 45, color: "#94A3B8" },
-                { label: "Not productive", percent: 10, count: 30, color: "#CBD5E1" },
+                { label: "Very productive", percent: 48, count: 144, color: palette.success },
+                { label: "Somewhat productive", percent: 27, count: 81, color: palette.primary },
+                { label: "Neutral", percent: 15, count: 45, color: palette.textMuted },
+                { label: "Not productive", percent: 10, count: 30, color: palette.border },
             ],
         },
         {
@@ -96,10 +96,10 @@ const MOCK_RESULTS: Record<string, QuestionResult[]> = {
             questionNumber: 2,
             title: "Has remote work improved your work-life balance?",
             options: [
-                { label: "Yes, significantly", percent: 54, count: 253, color: "#16A34A" },
-                { label: "A little", percent: 24, count: 112, color: "#2563EB" },
-                { label: "Not really", percent: 14, count: 66, color: "#94A3B8" },
-                { label: "No", percent: 8, count: 37, color: "#CBD5E1" },
+                { label: "Yes, significantly", percent: 54, count: 253, color: palette.success },
+                { label: "A little", percent: 24, count: 112, color: palette.primary },
+                { label: "Not really", percent: 14, count: 66, color: palette.textMuted },
+                { label: "No", percent: 8, count: 37, color: palette.border },
             ],
         },
     ],
@@ -141,7 +141,8 @@ export default function SurveyResultsScreen() {
                 <View style={styles.header}>
                     <View style={styles.topBar}>
                         <Pressable style={styles.backButton} onPress={() => router.back()}>
-                            <Ionicons name="chevron-back" size={20} color="#fff" />
+                            <Ionicons name="chevron-back" size={20} color={palette.white} />
+
                         </Pressable>
 
                         <View style={{ flex: 1 }}>
@@ -151,7 +152,7 @@ export default function SurveyResultsScreen() {
                     </View>
 
                     <View style={styles.statusBadge}>
-                        <Ionicons name="checkmark" size={14} color="#34D399" />
+                        <Ionicons name="checkmark" size={14} color={palette.green.text} />
                         <Text style={styles.statusText}>{getStatusText(survey)}</Text>
                     </View>
 
@@ -216,11 +217,7 @@ export default function SurveyResultsScreen() {
                                 style={styles.secondaryButton}
                                 onPress={() => Alert.alert("Share", "Mock share action")}
                             >
-                                <Ionicons
-                                    name="share-social-outline"
-                                    size={18}
-                                    color="#111827"
-                                />
+                                <Ionicons name="share-social-outline" size={18} color={palette.primaryDark} />
                                 <Text style={styles.secondaryButtonText}>Share</Text>
                             </Pressable>
 
@@ -228,7 +225,7 @@ export default function SurveyResultsScreen() {
                                 style={styles.primaryButton}
                                 onPress={() => Alert.alert("Export CSV", "Mock export action")}
                             >
-                                <Ionicons name="download-outline" size={18} color="#fff" />
+                                <Ionicons name="download-outline" size={18} color={palette.white} />
                                 <Text style={styles.primaryButtonText}>Export CSV</Text>
                             </Pressable>
                         </View>
