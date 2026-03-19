@@ -298,13 +298,13 @@ export default function Explore() {
                         <FontAwesome6
                             name="magnifying-glass"
                             size={16}
-                            color={palette.gray.text}
+                            color={palette.textSecondary}
                         />
                         <TextInput
                             value={query}
                             onChangeText={setQuery}
                             placeholder="Search by survey name"
-                            placeholderTextColor={palette.gray.text}
+                            placeholderTextColor={palette.textSecondary}
                             style={styles.searchInput}
                         />
                     </View>
@@ -375,10 +375,13 @@ export default function Explore() {
                         </View>
                     )}
                 </View>
+
                 <View style={styles.resultsRow}>
                     <Text style={styles.resultsText}>
-                        {categoryFilteredSurveys.length} survey{categoryFilteredSurveys.length === 1 ? "" : "s"} found
+                        {categoryFilteredSurveys.length} survey
+                        {categoryFilteredSurveys.length === 1 ? "" : "s"} found
                     </Text>
+
                     <Pressable onPress={nextSort}>
                         <Text style={styles.sortText}>Sort: {SORT_LABELS[sortBy]}</Text>
                     </Pressable>
@@ -417,7 +420,7 @@ export default function Explore() {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: palette.white,
+        backgroundColor: palette.background,
     },
     container: {
         padding: 14,
@@ -434,8 +437,8 @@ const styles = StyleSheet.create({
         height: 44,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: palette.grayBorder,
-        backgroundColor: palette.grayBackground,
+        borderColor: palette.border,
+        backgroundColor: palette.surfaceMuted,
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 14,
@@ -444,7 +447,7 @@ const styles = StyleSheet.create({
     searchInput: {
         flex: 1,
         fontSize: 15,
-        color: palette.black,
+        color: palette.textPrimary,
     },
     filterButton: {
         height: 44,
@@ -466,7 +469,7 @@ const styles = StyleSheet.create({
     categoryChip: {
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: palette.grayBorder,
+        borderColor: palette.border,
         paddingHorizontal: 16,
         paddingVertical: 8,
         backgroundColor: palette.white,
@@ -498,6 +501,8 @@ const styles = StyleSheet.create({
         borderRadius: 9,
         paddingHorizontal: 10,
         paddingVertical: 6,
+        borderWidth: 1,
+        borderColor: palette.primaryLight,
     },
     activeTagText: {
         color: palette.primary,

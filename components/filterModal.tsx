@@ -10,8 +10,10 @@ import {
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import { CATEGORIES } from "@/constants/surveyFilters";
+import { palette } from "@/theme/palette"; 
 
 const TIME_OPTIONS = ["Under 5 min", "5–10 min", "10–20 min"];
+const overlayColor = `${palette.black}40`;
 
 type FilterModalProps = {
     visible: boolean;
@@ -94,7 +96,7 @@ export default function FilterModal({
                     <ScrollView
                         style={styles.modalBody}
                         contentContainerStyle={styles.modalBodyContent}
-                        showsVerticalScrollIndicator={true}
+                        showsVerticalScrollIndicator
                     >
                         <Text style={styles.sectionTitle}>Categories</Text>
                         <View style={styles.chipsWrap}>
@@ -104,7 +106,10 @@ export default function FilterModal({
                                 return (
                                     <Pressable
                                         key={category}
-                                        style={[styles.modalChip, active && styles.modalChipActive]}
+                                        style={[
+                                            styles.modalChip,
+                                            active && styles.modalChipActive,
+                                        ]}
                                         onPress={() => toggleCategory(category)}
                                     >
                                         <Text
@@ -134,9 +139,9 @@ export default function FilterModal({
                                 step={1}
                                 value={draftMinReward}
                                 onValueChange={setDraftMinReward}
-                                minimumTrackTintColor="#3B6EF5"
-                                maximumTrackTintColor="#DCE3F0"
-                                thumbTintColor="#3B6EF5"
+                                minimumTrackTintColor={palette.primary}
+                                maximumTrackTintColor={palette.border}
+                                thumbTintColor={palette.primary}
                             />
 
                             <View style={styles.rewardScaleRow}>
@@ -148,7 +153,18 @@ export default function FilterModal({
                         <Text style={styles.sectionTitle}>Availability</Text>
                         <View style={styles.toggleRow}>
                             <Text style={styles.toggleText}>Open surveys only</Text>
-                            <Switch value={draftOpenOnly} onValueChange={setDraftOpenOnly} />
+                            <Switch
+                                value={draftOpenOnly}
+                                onValueChange={setDraftOpenOnly}
+                                trackColor={{
+                                    false: palette.border,
+                                    true: palette.primaryLight,
+                                }}
+                                thumbColor={
+                                    draftOpenOnly ? palette.primary : palette.white
+                                }
+                                ios_backgroundColor={palette.border}
+                            />
                         </View>
 
                         <Text style={styles.sectionTitle}>Estimated time</Text>
@@ -159,7 +175,10 @@ export default function FilterModal({
                                 return (
                                     <Pressable
                                         key={item}
-                                        style={[styles.modalChip, active && styles.modalChipActive]}
+                                        style={[
+                                            styles.modalChip,
+                                            active && styles.modalChipActive,
+                                        ]}
                                         onPress={() => setDraftTime(item)}
                                     >
                                         <Text
@@ -183,6 +202,14 @@ export default function FilterModal({
                             <Switch
                                 value={draftQualifiedOnly}
                                 onValueChange={setDraftQualifiedOnly}
+                                trackColor={{
+                                    false: palette.border,
+                                    true: palette.primaryLight,
+                                }}
+                                thumbColor={
+                                    draftQualifiedOnly ? palette.primary : palette.white
+                                }
+                                ios_backgroundColor={palette.border}
                             />
                         </View>
                     </ScrollView>
@@ -212,31 +239,31 @@ const styles = StyleSheet.create({
     modalOverlay: {
         flex: 1,
         justifyContent: "flex-end",
-        backgroundColor: "rgba(0,0,0,0.25)",
+        backgroundColor: overlayColor,
     },
-    
+
     modalBackdrop: {
         ...StyleSheet.absoluteFillObject,
     },
-    
+
     modalCard: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
         borderTopLeftRadius: 28,
         borderTopRightRadius: 28,
         paddingTop: 12,
         maxHeight: "88%",
         minHeight: "70%",
     },
-    
+
     dragHandle: {
         alignSelf: "center",
         width: 54,
         height: 6,
         borderRadius: 999,
-        backgroundColor: "#D9DEE8",
+        backgroundColor: palette.border,
         marginBottom: 18,
     },
-    
+
     modalHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -244,32 +271,32 @@ const styles = StyleSheet.create({
         paddingHorizontal: 22,
         paddingBottom: 14,
     },
-    
+
     modalTitle: {
         fontSize: 22,
         fontWeight: "700",
-        color: "#1F2A44",
+        color: palette.primaryDark,
     },
-    
+
     resetButton: {
         paddingVertical: 4,
     },
-    
+
     resetText: {
         fontSize: 16,
         fontWeight: "600",
-        color: "#2F6BFF",
+        color: palette.primary,
     },
-    
+
     modalBody: {
         flex: 1,
     },
-    
+
     modalBodyContent: {
         paddingHorizontal: 22,
         paddingBottom: 24,
     },
-    
+
     footer: {
         flexDirection: "row",
         gap: 12,
@@ -277,111 +304,111 @@ const styles = StyleSheet.create({
         paddingTop: 14,
         paddingBottom: 24,
         borderTopWidth: 1,
-        borderTopColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        borderTopColor: palette.border,
+        backgroundColor: palette.white,
     },
-    
+
     sectionTitle: {
         fontSize: 16,
         fontWeight: "700",
-        color: "#1F2A44",
+        color: palette.primaryDark,
         marginBottom: 12,
         marginTop: 12,
     },
-    
+
     chipsWrap: {
         flexDirection: "row",
         flexWrap: "wrap",
         gap: 10,
     },
-    
+
     modalChip: {
         paddingHorizontal: 18,
         paddingVertical: 12,
         borderRadius: 999,
         borderWidth: 1,
-        borderColor: "#D6DCEB",
-        backgroundColor: "#FFFFFF",
+        borderColor: palette.border,
+        backgroundColor: palette.white,
     },
-    
+
     modalChipActive: {
-        backgroundColor: "#3B6EF5",
-        borderColor: "#3B6EF5",
+        backgroundColor: palette.primary,
+        borderColor: palette.primary,
     },
-    
+
     modalChipText: {
-        color: "#4A5878",
+        color: palette.textSecondary,
         fontSize: 15,
         fontWeight: "500",
     },
-    
+
     modalChipTextActive: {
-        color: "#FFFFFF",
+        color: palette.white,
     },
-    
+
     rewardBox: {
         marginTop: 2,
         borderWidth: 1,
-        borderColor: "#E2E8F0",
-        backgroundColor: "#F8FAFC",
+        borderColor: palette.border,
+        backgroundColor: palette.surfaceSoft,
         borderRadius: 18,
         paddingHorizontal: 18,
         paddingVertical: 16,
     },
-    
+
     rewardHeaderRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: 12,
     },
-    
+
     rewardPlaceholder: {
         fontSize: 15,
-        color: "#667085",
+        color: palette.textSecondary,
     },
-    
+
     rewardValue: {
         fontSize: 28,
         fontWeight: "700",
-        color: "#1F2A44",
+        color: palette.primaryDark,
     },
-    
+
     slider: {
         width: "100%",
         height: 40,
     },
-    
+
     rewardScaleRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         marginTop: 4,
     },
-    
+
     rewardScaleText: {
         fontSize: 13,
-        color: "#667085",
+        color: palette.textSecondary,
     },
-    
+
     toggleRow: {
         minHeight: 56,
         borderWidth: 1,
-        borderColor: "#DCE3F0",
+        borderColor: palette.border,
         borderRadius: 18,
         paddingHorizontal: 18,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: palette.white,
     },
-    
+
     toggleText: {
         flex: 1,
         fontSize: 16,
-        color: "#33415C",
+        color: palette.primaryDarkText,
         paddingRight: 12,
     },
-    
+
     actionButton: {
         flex: 1,
         height: 58,
@@ -389,24 +416,24 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    
+
     cancelButton: {
-        backgroundColor: "#EEF2F7",
+        backgroundColor: palette.surfaceMuted,
     },
-    
+
     applyButton: {
-        backgroundColor: "#3B6EF5",
+        backgroundColor: palette.primary,
     },
-    
+
     cancelButtonText: {
         fontSize: 18,
         fontWeight: "600",
-        color: "#33415C",
+        color: palette.primaryDarkText,
     },
-    
+
     applyButtonText: {
         fontSize: 18,
         fontWeight: "700",
-        color: "#FFFFFF",
+        color: palette.white,
     },
 });
