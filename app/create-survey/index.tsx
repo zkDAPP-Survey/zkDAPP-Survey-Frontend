@@ -2,10 +2,12 @@ import * as React from "react";
 import { useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
+  NativeSyntheticEvent,
   Platform,
   Pressable,
   ScrollView,
   Text,
+  TextInputContentSizeChangeEventData,
   TextInput,
   View,
 } from "react-native";
@@ -32,6 +34,7 @@ export default function CreateSurvey() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerMode, setPickerMode] = useState<"start" | "end">("start");
   const [tempDate, setTempDate] = useState<Date>(new Date());
+  const [descriptionHeight, setDescriptionHeight] = useState(120);
 
   const [touched, setTouched] = useState({
     name: false,
@@ -131,6 +134,13 @@ export default function CreateSurvey() {
     setPickerOpen(false);
   };
 
+  const handleDescriptionSizeChange = (
+    event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>
+  ) => {
+    const nextHeight = Math.max(120, Math.ceil(event.nativeEvent.contentSize.height) + 24);
+    setDescriptionHeight(nextHeight);
+  };
+
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
@@ -180,10 +190,17 @@ export default function CreateSurvey() {
           <TextInput
             placeholder="Describe what this survey is about..."
             placeholderTextColor="#9CA3AF"
-            style={[styles.input, styles.textarea, descError && styles.inputError]}
+            style={[
+              styles.input,
+              styles.textarea,
+              { height: descriptionHeight },
+              descError && styles.inputError,
+            ]}
             multiline
+            scrollEnabled={false}
             value={description}
             onChangeText={setDesc}
+            onContentSizeChange={handleDescriptionSizeChange}
             onBlur={() => setTouched((p) => ({ ...p, description: true }))}
           />
           {descError && <Text style={styles.errorText}>Required</Text>}
@@ -359,7 +376,7 @@ const styles = StyleSheet.create({
     backgroundColor: palette.white,
   },
   textarea: {
-    height: 120,
+    minHeight: 120,
     paddingTop: 14,
     textAlignVertical: "top",
   },

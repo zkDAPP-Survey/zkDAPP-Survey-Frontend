@@ -8,6 +8,7 @@ import {
     TextInput,
     View,
 } from "react-native";
+import { router } from "expo-router";
 
 import SurveyCard from "@/components/surveyCard";
 import { SurveyCardData, SortKey } from "@/domain/models";
@@ -177,6 +178,10 @@ export default function Explore() {
         setSortBy(SORT_KEYS[nextIndex]);
     };
 
+    const handleViewDetails = (id: string) => {
+        router.push(`/voting/${id}` as any);
+    };
+
     const categoryFilteredSurveys = useMemo(() => {
         if (selectedCategory.length === 0 || selectedCategory.includes("All")) {
             return filteredSurveys;
@@ -265,7 +270,12 @@ export default function Explore() {
             </View>
 
             {categoryFilteredSurveys.map((survey) => (
-                <SurveyCard key={survey.id} survey={survey} />
+                <SurveyCard
+                    key={survey.id}
+                    survey={survey}
+                    onVote={handleViewDetails}
+                    voteLabel="Details"
+                />
             ))}
         </ScrollView>
     );

@@ -225,7 +225,12 @@ export default function Home() {
                 />
 
                 {availableForYou.map((survey) => (
-                    <SurveyCard key={survey.id} survey={survey} voteLabel="Vote" />
+                    <SurveyCard
+                        key={survey.id}
+                        survey={survey}
+                        voteLabel="Details"
+                        onVote={(id) => router.push(`/voting/${id}`)}
+                    />
                 ))}
             </ScrollView>
         </SafeAreaView>
