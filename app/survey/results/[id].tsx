@@ -11,7 +11,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { CreatedSurveyCardData } from "@/domain/models";
-
+import { palette } from "@/theme/palette"; 
 
 type QuestionOption = {
     label: string;
@@ -251,17 +251,17 @@ function StatCard({ value, label }: { value: string; label: string }) {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: "#0B1733",
+        backgroundColor: palette.primaryDark,
     },
     container: {
         flex: 1,
-        backgroundColor: "#0B1733",
+        backgroundColor: palette.primaryDark,
     },
     header: {
         paddingHorizontal: 20,
         paddingTop: 10,
         paddingBottom: 20,
-        backgroundColor: "#0B1733",
+        backgroundColor: palette.primaryDark,
     },
     topBar: {
         flexDirection: "row",
@@ -272,18 +272,18 @@ const styles = StyleSheet.create({
         width: 36,
         height: 36,
         borderRadius: 10,
-        backgroundColor: "rgba(255,255,255,0.08)",
+        backgroundColor: palette.white7,
         alignItems: "center",
         justifyContent: "center",
     },
     overline: {
-        color: "#6B7A99",
+        color: palette.white50,
         fontSize: 12,
         fontWeight: "700",
         marginBottom: 2,
     },
     headerTitle: {
-        color: "#fff",
+        color: palette.white,
         fontSize: 24,
         fontWeight: "800",
     },
@@ -293,15 +293,15 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 6,
-        backgroundColor: "rgba(22,163,74,0.15)",
-        borderColor: "rgba(52,211,153,0.25)",
+        backgroundColor: palette.green.bgSoft,
+        borderColor: palette.successLight,
         borderWidth: 1,
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 999,
     },
     statusText: {
-        color: "#34D399",
+        color: palette.green.text,
         fontSize: 14,
         fontWeight: "700",
     },
@@ -312,23 +312,23 @@ const styles = StyleSheet.create({
     },
     statCard: {
         flex: 1,
-        backgroundColor: "rgba(255,255,255,0.08)",
+        backgroundColor: palette.white7,
         borderRadius: 16,
         padding: 14,
     },
     statValue: {
-        color: "#fff",
+        color: palette.white,
         fontSize: 18,
         fontWeight: "800",
     },
     statLabel: {
-        color: "#7C8AA7",
+        color: palette.white50,
         fontSize: 13,
         marginTop: 4,
     },
     content: {
         flex: 1,
-        backgroundColor: "#F3F4F6",
+        backgroundColor: palette.surfaceMuted,
         borderTopLeftRadius: 22,
         borderTopRightRadius: 22,
         overflow: "hidden",
@@ -338,10 +338,10 @@ const styles = StyleSheet.create({
         paddingBottom: 30,
     },
     card: {
-        backgroundColor: "#fff",
+        backgroundColor: palette.white,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: "#D9E0EA",
+        borderColor: palette.border,
         padding: 16,
         marginBottom: 16,
     },
@@ -356,11 +356,11 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 22,
         fontWeight: "800",
-        color: "#162033",
+        color: palette.primaryDark,
         lineHeight: 28,
     },
     questionNumber: {
-        color: "#94A3B8",
+        color: palette.textMuted,
         fontSize: 14,
         fontWeight: "700",
     },
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     },
     optionLabel: {
         flex: 1,
-        color: "#1E293B",
+        color: palette.primaryDark,
         fontSize: 16,
         fontWeight: "700",
     },
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     progressTrack: {
         height: 10,
         borderRadius: 999,
-        backgroundColor: "#E8EDF3",
+        backgroundColor: palette.border,
         overflow: "hidden",
     },
     progressFill: {
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     },
     optionCount: {
         marginTop: 6,
-        color: "#94A3B8",
+        color: palette.textMuted,
         fontSize: 14,
     },
     buttonRow: {
@@ -406,9 +406,9 @@ const styles = StyleSheet.create({
     secondaryButton: {
         flex: 1,
         height: 54,
-        backgroundColor: "#fff",
+        backgroundColor: palette.white,
         borderWidth: 1,
-        borderColor: "#D6DCE5",
+        borderColor: palette.border,
         borderRadius: 14,
         flexDirection: "row",
         alignItems: "center",
@@ -416,14 +416,14 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     secondaryButtonText: {
-        color: "#111827",
+        color: palette.primaryDark,
         fontSize: 16,
         fontWeight: "700",
     },
     primaryButton: {
         flex: 1.4,
         height: 54,
-        backgroundColor: "#2F6BFF",
+        backgroundColor: palette.primary,
         borderRadius: 14,
         flexDirection: "row",
         alignItems: "center",
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     primaryButtonText: {
-        color: "#fff",
+        color: palette.white,
         fontSize: 16,
         fontWeight: "700",
     },
