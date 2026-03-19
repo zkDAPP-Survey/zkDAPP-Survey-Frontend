@@ -14,9 +14,9 @@ import SurveyCard from "@/components/surveyCard";
 import { SurveyCardData, SortKey } from "@/domain/models";
 
 import { palette } from "@/theme/palette";
+import FilterModal from "@/components/filterModal";
+import { CATEGORIES } from "@/constants/surveyFilters";
 
-
-const CATEGORIES = ["All", "Health", "Finance", "Tech", "Politics", "Lifestyle", "Productivity"];
 
 const SURVEYS: SurveyCardData[] = [
   {
@@ -154,14 +154,64 @@ export default function Explore() {
     const [sortBy, setSortBy] = useState<SortKey>("rewardDesc");
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
 
+    const [isFilterVisible, setIsFilterVisible] = useState(false);
+
+    const [draftCategories, setDraftCategories] = useState<string[]>(["Health"]);
+    const [draftMinReward, setDraftMinReward] = useState(1);
+    const [draftOpenOnly, setDraftOpenOnly] = useState(true);
+    const [draftTime, setDraftTime] = useState("5–10 min");
+    const [draftQualifiedOnly, setDraftQualifiedOnly] = useState(true);
+
+    const [appliedCategories, setAppliedCategories] = useState<string[]>(["Health"]);
+    const [appliedMinReward, setAppliedMinReward] = useState(1);
+    const [appliedOpenOnly, setAppliedOpenOnly] = useState(true);
+    const [appliedTime, setAppliedTime] = useState("5–10 min");
+    const [appliedQualifiedOnly, setAppliedQualifiedOnly] = useState(true);
+
     const filteredSurveys = useMemo(() => {
         const loweredQuery = query.trim().toLowerCase();
 
-        const searchFiltered = SURVEYS.filter((survey) =>
+        let result = SURVEYS.filter((survey) =>
             survey.title.toLowerCase().includes(loweredQuery)
         );
 
-        return [...searchFiltered].sort((a, b) => {
+        if (appliedCategories.length > 0 && !appliedCategories.includes("All")) {
+            result = result.filter((survey) =>
+                survey.categories.some((cat) => appliedCategories.includes(cat.label))
+            );
+        }
+
+        result = result.filter(
+            (survey) => (survey.budget?.rewardPerVoter?.amount ?? 0) >= appliedMinReward
+        );
+
+        if (appliedOpenOnly) {
+            result = result.filter((survey) => survey.status === "active");
+        }
+        
+        if (appliedQualifiedOnly) {
+            result = result.filter(
+                (survey) => survey.eligibility?.decision === "qualify"
+            );
+        }
+
+        if (appliedTime === "Under 5 min") {
+            result = result.filter((survey) => (survey.estimatedMinutes ?? 0) < 5);
+        } else if (appliedTime === "5–10 min") {
+            result = result.filter(
+                (survey) =>
+                    (survey.estimatedMinutes ?? 0) >= 5 &&
+                    (survey.estimatedMinutes ?? 0) <= 10
+            );
+        } else if (appliedTime === "10–20 min") {
+            result = result.filter(
+                (survey) =>
+                    (survey.estimatedMinutes ?? 0) >= 10 &&
+                    (survey.estimatedMinutes ?? 0) <= 20
+            );
+        }
+
+        return [...result].sort((a, b) => {
             if (sortBy === "rewardDesc") {
                 return (b.budget?.rewardPerVoter?.amount ?? 0) - (a.budget?.rewardPerVoter?.amount ?? 0);
             }
@@ -170,7 +220,25 @@ export default function Explore() {
             }
             return a.title.localeCompare(b.title);
         });
-    }, [query, sortBy]);
+    }, [
+        query,
+        sortBy,
+        appliedCategories,
+        appliedMinReward,
+        appliedOpenOnly,
+        appliedTime,
+        appliedQualifiedOnly,
+    ]);
+
+    const categoryFilteredSurveys = useMemo(() => {
+        if (selectedCategory.length === 0 || selectedCategory.includes("All")) {
+            return filteredSurveys;
+        }
+
+        return filteredSurveys.filter((survey) =>
+            survey.categories.some((cat) => selectedCategory.includes(cat.label))
+        );
+    }, [filteredSurveys, selectedCategory]);
 
     const nextSort = () => {
         const currentIndex = SORT_KEYS.indexOf(sortBy);
@@ -181,15 +249,6 @@ export default function Explore() {
     const handleViewDetails = (id: string) => {
         router.push(`/voting/${id}` as any);
     };
-
-    const categoryFilteredSurveys = useMemo(() => {
-        if (selectedCategory.length === 0 || selectedCategory.includes("All")) {
-            return filteredSurveys;
-        }
-        return filteredSurveys.filter((survey) =>
-            survey.categories.some((cat) => selectedCategory.includes(cat.label))
-        );
-    }, [filteredSurveys, selectedCategory]);
 
     const selectCategory = (category: string) => {
         if (category === "All") {
@@ -205,79 +264,134 @@ export default function Explore() {
         }
     };
 
-    return (
-        <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
-            <View style={styles.searchRow}>
-                <View style={styles.searchBox}>
-                    <FontAwesome6
-                        name="magnifying-glass"
-                        size={16}
-                        color={palette.gray.text}
-                    />
-                    <TextInput
-                        value={query}
-                        onChangeText={setQuery}
-                        placeholder="Search by survey name"
-                        placeholderTextColor={palette.gray.text}
-                        style={styles.searchInput}
-                    />
-                </View>
-                <Pressable style={styles.filterButton}>
-                    <Text style={styles.filterButtonText}>Filter</Text>
-                </Pressable>
-            </View>
+    const openFilterModal = () => {
+        setDraftCategories(appliedCategories);
+        setDraftMinReward(appliedMinReward);
+        setDraftOpenOnly(appliedOpenOnly);
+        setDraftTime(appliedTime);
+        setDraftQualifiedOnly(appliedQualifiedOnly);
+        setIsFilterVisible(true);
+    };
 
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.categoryRow}
-            >
-                {CATEGORIES.map((item) => (
-                    <View
-                        key={item}
-                        style={[styles.categoryChip, selectedCategory.includes(item) && styles.categoryChipActive]}
-                        onTouchStart={() => selectCategory(item)}
-                    >
-                        <Text
-                            style={[
-                                styles.categoryChipText,
-                                selectedCategory.includes(item) && styles.categoryChipTextActive,
-                            ]}
-                        >
-                            {item}
-                        </Text>
+    const resetFilters = () => {
+        setDraftCategories([]);
+        setDraftMinReward(1);
+        setDraftOpenOnly(false);
+        setDraftTime("");
+        setDraftQualifiedOnly(false);
+    };
+
+    const applyFilters = () => {
+        setAppliedCategories(draftCategories);
+        setAppliedMinReward(Number(draftMinReward) || 0);
+        setAppliedOpenOnly(draftOpenOnly);
+        setAppliedTime(draftTime);
+        setAppliedQualifiedOnly(draftQualifiedOnly);
+        setIsFilterVisible(false);
+    };
+
+    return (
+        <>
+            <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
+                <View style={styles.searchRow}>
+                    <View style={styles.searchBox}>
+                        <FontAwesome6
+                            name="magnifying-glass"
+                            size={16}
+                            color={palette.gray.text}
+                        />
+                        <TextInput
+                            value={query}
+                            onChangeText={setQuery}
+                            placeholder="Search by survey name"
+                            placeholderTextColor={palette.gray.text}
+                            style={styles.searchInput}
+                        />
                     </View>
+
+                    <Pressable style={styles.filterButton} onPress={openFilterModal}>
+                        <Text style={styles.filterButtonText}>Filter</Text>
+                    </Pressable>
+                </View>
+
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.categoryRow}
+                >
+                    {CATEGORIES.map((item) => (
+                        <Pressable
+                            key={item}
+                            style={[
+                                styles.categoryChip,
+                                selectedCategory.includes(item) && styles.categoryChipActive,
+                            ]}
+                            onPress={() => selectCategory(item)}
+                        >
+                            <Text
+                                style={[
+                                    styles.categoryChipText,
+                                    selectedCategory.includes(item) && styles.categoryChipTextActive,
+                                ]}
+                            >
+                                {item}
+                            </Text>
+                        </Pressable>
+                    ))}
+                </ScrollView>
+
+                <View style={styles.filterTagsRow}>
+                    <Text style={styles.activeText}>Active:</Text>
+
+                    {appliedMinReward > 0 && (
+                        <View style={styles.activeTag}>
+                            <Text style={styles.activeTagText}>Reward: ${appliedMinReward}+</Text>
+                        </View>
+                    )}
+
+                    {appliedOpenOnly && (
+                        <View style={styles.activeTag}>
+                            <Text style={styles.activeTagText}>Open only</Text>
+                        </View>
+                    )}
+                </View>
+
+                <View style={styles.resultsRow}>
+                    <Text style={styles.resultsText}>
+                        {categoryFilteredSurveys.length} survey{categoryFilteredSurveys.length === 1 ? "" : "s"} found
+                    </Text>
+                    <Pressable onPress={nextSort}>
+                        <Text style={styles.sortText}>Sort: {SORT_LABELS[sortBy]}</Text>
+                    </Pressable>
+                </View>
+
+                {categoryFilteredSurveys.map((survey) => (
+                    <SurveyCard
+                        key={survey.id}
+                        survey={survey}
+                        onVote={handleViewDetails}
+                        voteLabel="Details"
+                    />
                 ))}
             </ScrollView>
 
-            <View style={styles.filterTagsRow}>
-                <Text style={styles.activeText}>Active:</Text>
-                <View style={styles.activeTag}>
-                    <Text style={styles.activeTagText}>Reward: $1+</Text>
-                </View>
-                <View style={styles.activeTag}>
-                    <Text style={styles.activeTagText}>Open only</Text>
-                </View>
-            </View>
-
-            <View style={styles.resultsRow}>
-                <Text style={styles.resultsText}>
-                    {categoryFilteredSurveys.length} survey{categoryFilteredSurveys.length === 1 ? "" : "s"} found
-                </Text>
-                <Pressable onPress={nextSort}>
-                    <Text style={styles.sortText}>Sort: {SORT_LABELS[sortBy]}</Text>
-                </Pressable>
-            </View>
-
-            {categoryFilteredSurveys.map((survey) => (
-                <SurveyCard
-                    key={survey.id}
-                    survey={survey}
-                    onVote={handleViewDetails}
-                    voteLabel="Details"
-                />
-            ))}
-        </ScrollView>
+            <FilterModal
+                visible={isFilterVisible}
+                onClose={() => setIsFilterVisible(false)}
+                onReset={resetFilters}
+                onApply={applyFilters}
+                draftCategories={draftCategories}
+                setDraftCategories={setDraftCategories}
+                draftMinReward={draftMinReward}
+                setDraftMinReward={setDraftMinReward}
+                draftOpenOnly={draftOpenOnly}
+                setDraftOpenOnly={setDraftOpenOnly}
+                draftTime={draftTime}
+                setDraftTime={setDraftTime}
+                draftQualifiedOnly={draftQualifiedOnly}
+                setDraftQualifiedOnly={setDraftQualifiedOnly}
+            />
+        </>
     );
 }
 
