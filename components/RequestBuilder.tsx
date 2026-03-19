@@ -103,6 +103,7 @@ export default function RequestBuilder({ onClose }: RequestBuilderProps) {
       const callbackUrl = 'zkdappsurveyfrontend://auth';
       const requestId = `req_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
       const nonce = `nonce_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
+      const selectedClaims = Array.from(state.selectedAttributes);
 
       const requestPayload = {
         version: '1.0',
@@ -113,7 +114,7 @@ export default function RequestBuilder({ onClose }: RequestBuilderProps) {
         callbackUrl,
         credentialQuery: {
           vct: credentialConfig.vct,
-          requestedClaims: Array.from(state.selectedAttributes),
+          requestedClaims: selectedClaims,
         },
         options: {
           allowUserSelectSubset: true,
@@ -124,11 +125,11 @@ export default function RequestBuilder({ onClose }: RequestBuilderProps) {
         callbackUrl,
       )}&type=${encodeURIComponent(credentialConfig.vct)}&requestId=${encodeURIComponent(
         requestId,
-      )}&request=${encodeURIComponent(JSON.stringify(requestPayload))}`;
+      )}&requestedClaims=${encodeURIComponent(JSON.stringify(selectedClaims))}&request=${encodeURIComponent(JSON.stringify(requestPayload))}`;
 
       console.log('[RequestBuilder] Sending request to Valera:', {
         vct: credentialConfig.vct,
-        requestedClaims: Array.from(state.selectedAttributes),
+        requestedClaims: selectedClaims,
         requestId,
       });
 
