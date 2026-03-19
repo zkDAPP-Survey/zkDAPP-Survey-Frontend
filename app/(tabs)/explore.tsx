@@ -19,126 +19,126 @@ import { CATEGORIES } from "@/constants/surveyFilters";
 
 
 const SURVEYS: SurveyCardData[] = [
-  {
-    "id": "1",
-    "title": "Fitness App Usage Habits",
-    "description": "How often do you use fitness apps and what features matter most? 10-question study.",
-    "status": "active",
-    "categories": [
-      { "id": "health", "label": "Health" },
-      { "id": "lifestyle", "label": "Lifestyle" }
-    ],
-    "tags": [
-      { "id": "health", "label": "Health" },
-      { "id": "lifestyle", "label": "Lifestyle" }
-    ],
-    "estimatedMinutes": 5,
-    "eligibility": {
-      "decision": "qualify",
-      "matchedRequirements": [],
-      "failedRequirements": []
+    {
+        "id": "1",
+        "title": "Fitness App Usage Habits",
+        "description": "How often do you use fitness apps and what features matter most? 10-question study.",
+        "status": "active",
+        "categories": [
+            { "id": "health", "label": "Health" },
+            { "id": "lifestyle", "label": "Lifestyle" }
+        ],
+        "tags": [
+            { "id": "health", "label": "Health" },
+            { "id": "lifestyle", "label": "Lifestyle" }
+        ],
+        "estimatedMinutes": 5,
+        "eligibility": {
+            "decision": "qualify",
+            "matchedRequirements": [],
+            "failedRequirements": []
+        },
+        "budget": {
+            "rewardPerVoter": { "amount": 2, "currency": "USD" }
+        },
+        "progress": {
+            "responseCount": 88,
+            "targetResponses": 200
+        },
+        "listVariant": "explore",
+        "primaryAction": "vote",
+        "primaryActionLabel": "Start"
     },
-    "budget": {
-      "rewardPerVoter": { "amount": 2, "currency": "USD" }
+    {
+        "id": "2",
+        "title": "Prescription Drug Affordability",
+        "description": "Share your experience with prescription costs and insurance coverage. Anonymous and secure.",
+        "status": "active",
+        "categories": [
+            { "id": "health", "label": "Health" },
+            { "id": "finance", "label": "Finance" }
+        ],
+        "tags": [
+            { "id": "health", "label": "Health" },
+            { "id": "finance", "label": "Finance" }
+        ],
+        "estimatedMinutes": 8,
+        "eligibility": {
+            "decision": "not_qualified",
+            "matchedRequirements": [],
+            "failedRequirements": []
+        },
+        "budget": {
+            "rewardPerVoter": { "amount": 3.5, "currency": "USD" }
+        },
+        "progress": {
+            "responseCount": 203,
+            "targetResponses": 400
+        },
+        "listVariant": "explore",
+        "primaryAction": "details",
+        "primaryActionLabel": "View"
     },
-    "progress": {
-      "responseCount": 88,
-      "targetResponses": 200
+    {
+        "id": "3",
+        "title": "Remote Work Tool Preferences",
+        "description": "Help us compare productivity tools used by distributed teams across different industries.",
+        "status": "active",
+        "categories": [
+            { "id": "tech", "label": "Tech" },
+            { "id": "productivity", "label": "Productivity" }
+        ],
+        "tags": [
+            { "id": "tech", "label": "Tech" },
+            { "id": "productivity", "label": "Productivity" }
+        ],
+        "estimatedMinutes": 6,
+        "eligibility": {
+            "decision": "qualify",
+            "matchedRequirements": [],
+            "failedRequirements": []
+        },
+        "budget": {
+            "rewardPerVoter": { "amount": 1.25, "currency": "USD" }
+        },
+        "progress": {
+            "responseCount": 52,
+            "targetResponses": 180
+        },
+        "listVariant": "explore",
+        "primaryAction": "vote",
+        "primaryActionLabel": "Start"
     },
-    "listVariant": "explore",
-    "primaryAction": "vote",
-    "primaryActionLabel": "Start"
-  },
-  {
-    "id": "2",
-    "title": "Prescription Drug Affordability",
-    "description": "Share your experience with prescription costs and insurance coverage. Anonymous and secure.",
-    "status": "active",
-    "categories": [
-      { "id": "health", "label": "Health" },
-      { "id": "finance", "label": "Finance" }
-    ],
-    "tags": [
-      { "id": "health", "label": "Health" },
-      { "id": "finance", "label": "Finance" }
-    ],
-    "estimatedMinutes": 8,
-    "eligibility": {
-      "decision": "not_qualified",
-      "matchedRequirements": [],
-      "failedRequirements": []
-    },
-    "budget": {
-      "rewardPerVoter": { "amount": 3.5, "currency": "USD" }
-    },
-    "progress": {
-      "responseCount": 203,
-      "targetResponses": 400
-    },
-    "listVariant": "explore",
-    "primaryAction": "details",
-    "primaryActionLabel": "View"
-  },
-  {
-    "id": "3",
-    "title": "Remote Work Tool Preferences",
-    "description": "Help us compare productivity tools used by distributed teams across different industries.",
-    "status": "active",
-    "categories": [
-      { "id": "tech", "label": "Tech" },
-      { "id": "productivity", "label": "Productivity" }
-    ],
-    "tags": [
-      { "id": "tech", "label": "Tech" },
-      { "id": "productivity", "label": "Productivity" }
-    ],
-    "estimatedMinutes": 6,
-    "eligibility": {
-      "decision": "qualify",
-      "matchedRequirements": [],
-      "failedRequirements": []
-    },
-    "budget": {
-      "rewardPerVoter": { "amount": 1.25, "currency": "USD" }
-    },
-    "progress": {
-      "responseCount": 52,
-      "targetResponses": 180
-    },
-    "listVariant": "explore",
-    "primaryAction": "vote",
-    "primaryActionLabel": "Start"
-  },
-  {
-    "id": "4",
-    "title": "Personal Banking Mobile UX",
-    "description": "Tell us what works and what does not in your banking app experience over the last 3 months.",
-    "status": "active",
-    "categories": [
-      { "id": "finance", "label": "Finance" },
-      { "id": "tech", "label": "Tech" }
-    ],
-    "tags": [
-      { "id": "finance", "label": "Finance" },
-      { "id": "tech", "label": "Tech" }
-    ],
-    "estimatedMinutes": 7,
-    "eligibility": {
-      "decision": "qualify",
-      "matchedRequirements": [],
-      "failedRequirements": []
-    },
-    "budget": {
-      "rewardPerVoter": { "amount": 2.75, "currency": "USD" }
-    },
-    "progress": {
-      "responseCount": 119,
-      "targetResponses": 250
-    },
-    "listVariant": "explore",
-    "primaryAction": "vote",
-    "primaryActionLabel": "Start"
-  }
+    {
+        "id": "4",
+        "title": "Personal Banking Mobile UX",
+        "description": "Tell us what works and what does not in your banking app experience over the last 3 months.",
+        "status": "active",
+        "categories": [
+            { "id": "finance", "label": "Finance" },
+            { "id": "tech", "label": "Tech" }
+        ],
+        "tags": [
+            { "id": "finance", "label": "Finance" },
+            { "id": "tech", "label": "Tech" }
+        ],
+        "estimatedMinutes": 7,
+        "eligibility": {
+            "decision": "qualify",
+            "matchedRequirements": [],
+            "failedRequirements": []
+        },
+        "budget": {
+            "rewardPerVoter": { "amount": 2.75, "currency": "USD" }
+        },
+        "progress": {
+            "responseCount": 119,
+            "targetResponses": 250
+        },
+        "listVariant": "explore",
+        "primaryAction": "vote",
+        "primaryActionLabel": "Start"
+    }
 ];
 
 const SORT_LABELS: Record<SortKey, string> = {
@@ -156,17 +156,17 @@ export default function Explore() {
 
     const [isFilterVisible, setIsFilterVisible] = useState(false);
 
-    const [draftCategories, setDraftCategories] = useState<string[]>(["Health"]);
-    const [draftMinReward, setDraftMinReward] = useState(1);
-    const [draftOpenOnly, setDraftOpenOnly] = useState(true);
-    const [draftTime, setDraftTime] = useState("5–10 min");
-    const [draftQualifiedOnly, setDraftQualifiedOnly] = useState(true);
+    const [draftCategories, setDraftCategories] = useState<string[]>([]);
+    const [draftMinReward, setDraftMinReward] = useState(0);
+    const [draftOpenOnly, setDraftOpenOnly] = useState(false);
+    const [draftTime, setDraftTime] = useState("");
+    const [draftQualifiedOnly, setDraftQualifiedOnly] = useState(false);
 
-    const [appliedCategories, setAppliedCategories] = useState<string[]>(["Health"]);
-    const [appliedMinReward, setAppliedMinReward] = useState(1);
-    const [appliedOpenOnly, setAppliedOpenOnly] = useState(true);
-    const [appliedTime, setAppliedTime] = useState("5–10 min");
-    const [appliedQualifiedOnly, setAppliedQualifiedOnly] = useState(true);
+    const [appliedCategories, setAppliedCategories] = useState<string[]>([]);
+    const [appliedMinReward, setAppliedMinReward] = useState(0);
+    const [appliedOpenOnly, setAppliedOpenOnly] = useState(false);
+    const [appliedTime, setAppliedTime] = useState("");
+    const [appliedQualifiedOnly, setAppliedQualifiedOnly] = useState(false);
 
     const filteredSurveys = useMemo(() => {
         const loweredQuery = query.trim().toLowerCase();
@@ -188,7 +188,7 @@ export default function Explore() {
         if (appliedOpenOnly) {
             result = result.filter((survey) => survey.status === "active");
         }
-        
+
         if (appliedQualifiedOnly) {
             result = result.filter(
                 (survey) => survey.eligibility?.decision === "qualify"
@@ -275,7 +275,7 @@ export default function Explore() {
 
     const resetFilters = () => {
         setDraftCategories([]);
-        setDraftMinReward(1);
+        setDraftMinReward(0);
         setDraftOpenOnly(false);
         setDraftTime("");
         setDraftQualifiedOnly(false);
@@ -343,6 +343,14 @@ export default function Explore() {
                 <View style={styles.filterTagsRow}>
                     <Text style={styles.activeText}>Active:</Text>
 
+                    {appliedCategories.length > 0 && !appliedCategories.includes("All") && (
+                        <View style={styles.activeTag}>
+                            <Text style={styles.activeTagText}>
+                                Categories: {appliedCategories.join(", ")}
+                            </Text>
+                        </View>
+                    )}
+
                     {appliedMinReward > 0 && (
                         <View style={styles.activeTag}>
                             <Text style={styles.activeTagText}>Reward: ${appliedMinReward}+</Text>
@@ -354,8 +362,19 @@ export default function Explore() {
                             <Text style={styles.activeTagText}>Open only</Text>
                         </View>
                     )}
-                </View>
 
+                    {appliedTime !== "" && (
+                        <View style={styles.activeTag}>
+                            <Text style={styles.activeTagText}>Time: {appliedTime}</Text>
+                        </View>
+                    )}
+
+                    {appliedQualifiedOnly && (
+                        <View style={styles.activeTag}>
+                            <Text style={styles.activeTagText}>Qualified only</Text>
+                        </View>
+                    )}
+                </View>
                 <View style={styles.resultsRow}>
                     <Text style={styles.resultsText}>
                         {categoryFilteredSurveys.length} survey{categoryFilteredSurveys.length === 1 ? "" : "s"} found
