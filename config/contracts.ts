@@ -10,6 +10,10 @@ export const SURVEY_MANAGER_RPC_URL =
   process.env.EXPO_PUBLIC_REGISTRY_RPC_URL?.trim() ||
   "https://ethereum-sepolia-rpc.publicnode.com";
 
+// Submits registrations so voter wallets never need ETH (npm run relayer); 10.0.2.2 is the host from the emulator
+export const RELAYER_URL =
+  process.env.EXPO_PUBLIC_RELAYER_URL?.trim() || "http://10.0.2.2:8790";
+
 export const SURVEY_MANAGER_DEPLOYMENT_BLOCK = Number(
   process.env.EXPO_PUBLIC_SURVEY_MANAGER_DEPLOYMENT_BLOCK ?? 10854396
 );

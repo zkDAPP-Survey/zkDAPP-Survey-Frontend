@@ -20,7 +20,7 @@ import { palette } from "@/theme/palette";
 import { ContractElectionStatus, ChainElection } from "@/types/election";
 import { loadOrFetchElectionMetadata } from "@/utils/electionMetadataStore";
 import { createVocdoniClient } from "@/utils/vocdoni/sdk";
-import { getOrCreateDeviceWallet } from "@/utils/vocdoni/wallet";
+import { getVoterWalletForElection } from "@/utils/vocdoni/wallet";
 import { useVoting } from "@/utils/VotingContext";
 
 const CAT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -57,10 +57,10 @@ const loadContractSurveyDetail = async (vocdoniElectionId: string): Promise<Surv
     throw new Error("This contract survey has already ended.");
   }
 
-  const wallet = await getOrCreateDeviceWallet();
+  const wallet = await getVoterWalletForElection(election.id);
   const registered = await isUserRegistered(election.id, wallet.address);
   if (!registered) {
-    throw new Error("This wallet is not registered for the contract survey.");
+    throw new Error("This device is not registered for the contract survey.");
   }
 
   const stored = await loadOrFetchElectionMetadata({

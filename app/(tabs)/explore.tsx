@@ -27,7 +27,7 @@ import { ChainElection, ContractElectionStatus } from "@/types/election";
 import { loadOrFetchElectionMetadataMap, StoredElectionMetadata } from "@/utils/electionMetadataStore";
 import { showAlert } from "@/utils/platformAlert";
 import { createVocdoniClient } from "@/utils/vocdoni/sdk";
-import { getOrCreateDeviceWallet } from "@/utils/vocdoni/wallet";
+import { getVoterWalletForElection } from "@/utils/vocdoni/wallet";
 
 const SORT_LABELS: Record<SortKey, string> = {
     nameAsc: "Name A-Z",
@@ -72,8 +72,6 @@ export default function Explore() {
                 getUnstartedContractElections(),
                 getMyRegisteredElections(),
             ]);
-            const wallet = await getOrCreateDeviceWallet();
-            const vocdoniClient = await createVocdoniClient(wallet);
             const visibleRegistered: ChainElection[] = [];
 
             for (const election of registered) {
@@ -87,6 +85,8 @@ export default function Explore() {
                 }
 
                 try {
+                    // Each survey is voted on by its own voter wallet, so ask Vocdoni with that one
+                    const vocdoniClient = await createVocdoniClient(await getVoterWalletForElection(election.id));
                     vocdoniClient.setElectionId(election.vocdoniElectionId);
                     await vocdoniClient.fetchElection(election.vocdoniElectionId);
                     const voteId = await vocdoniClient.hasAlreadyVoted();

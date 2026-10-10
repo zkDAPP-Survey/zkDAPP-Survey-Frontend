@@ -52,11 +52,6 @@ function buildEligibilityInput(source = {}) {
     districtKey: asString(source.districtKey),
     districtValue: asString(source.districtValue),
 
-    // ── PIN disclosure (always required; basis of the per-election nullifier) ──
-    pinSalt: asString(source.pinSalt),
-    pinKey: asString(source.pinKey),
-    pinValue: asString(source.pinValue),
-
     // ── Public requirement inputs ────────────────────────────────────────────
     currentDate: asString(source.currentDate),
     minAge: asString(source.minAge, '0'),

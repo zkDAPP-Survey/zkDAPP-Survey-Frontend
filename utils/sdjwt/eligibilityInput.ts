@@ -22,9 +22,6 @@ export interface EligibilityCircuitInput {
     districtSalt: string;
     districtKey: string;
     districtValue: string;
-    pinSalt: string;
-    pinKey: string;
-    pinValue: string;
     currentDate: string;
     minAge: string;
     enableAgeCheck: string;
@@ -62,7 +59,6 @@ const EXPIRY_ATTRIBUTE_KEYS = ["expiry_date"];
 const COUNTRY_ATTRIBUTE_KEYS = ["country_code"];
 const REGION_ATTRIBUTE_KEYS = ["region"];
 const DISTRICT_ATTRIBUTE_KEYS = ["district"];
-const PIN_ATTRIBUTE_KEYS = ["pin"];
 
 function stringToBigInt(value: string): string {
     const snarkField = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
@@ -244,7 +240,6 @@ export function buildEligibilityCircuitInput(
     const country = resolveDisclosureTuple(parsed, COUNTRY_ATTRIBUTE_KEYS, "country", true);
     const region = resolveDisclosureTuple(parsed, REGION_ATTRIBUTE_KEYS, "region", true);
     const district = resolveDisclosureTuple(parsed, DISTRICT_ATTRIBUTE_KEYS, "district", true);
-    const pin = resolveDisclosureTuple(parsed, PIN_ATTRIBUTE_KEYS, "personal identification number (pin)", false);
 
     return {
         ...identity,
@@ -263,9 +258,6 @@ export function buildEligibilityCircuitInput(
         districtSalt: district.salt,
         districtKey: district.key,
         districtValue: district.value,
-        pinSalt: pin.salt,
-        pinKey: pin.key,
-        pinValue: pin.value,
         currentDate,
         minAge: minAge || "0",
         enableAgeCheck: enableAgeCheck || "1",

@@ -59,3 +59,5 @@ zk/build/**/witness.wtns
 MoproReactNativeBindings/android/build/
 MoproReactNativeBindings/android/.cxx/
 MoproReactNativeBindings/lib/
+# relayer key (npm run relayer -- --keygen)
+relayer/.env

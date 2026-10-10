@@ -8,11 +8,11 @@ import { EligibilityCircuitInput } from "@/utils/sdjwt/eligibilityInput";
 // doing that right after returning from Valera (when Android has dropped the app's Metro connection in the
 // background) makes React Native reload the whole app. Web uses moproProver.web.ts instead.
 
-// On-device Groth16 proving with mopro (native Rust, arkworks) for circuit v3.
+// On-device Groth16 proving with mopro (native Rust, arkworks) for circuit v4.
 // The native prover selects the witness calculator by the zkey file name, so the asset name must stay
-// "eligibility_v3.zkey" (see mopro-prover/zksurvey-wsl-src/src/lib.rs). A new name per circuit version also
+// "eligibility_v4.zkey" (see mopro-prover/zksurvey-wsl-src/src/lib.rs). A new name per circuit version also
 // keeps devices from reusing a zkey cached by an older app build.
-const ZKEY_FILE_NAME = "eligibility_v3.zkey";
+const ZKEY_FILE_NAME = "eligibility_v4.zkey";
 
 export type OnDeviceProofResult = {
   calldata: Groth16ProofCalldata;

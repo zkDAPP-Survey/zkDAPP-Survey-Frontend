@@ -28,7 +28,7 @@ import { loadOrFetchElectionMetadata, StoredElectionMetadata } from "@/utils/ele
 import { showAlert } from "@/utils/platformAlert";
 import { getAttributeCandidatesForRequirement } from "@/utils/requirementAttributeMap";
 import { buildEligibilityCircuitInputFromToken } from "@/utils/sdjwt/eligibilityInput";
-import { getOrCreateDeviceWallet } from "@/utils/vocdoni/wallet";
+import { getVoterWalletForElection } from "@/utils/vocdoni/wallet";
 import {
   CREDENTIAL_TYPES,
   CredentialType,
@@ -159,10 +159,8 @@ function getRequestedClaimsForCredential(
 
   return config.attributes
     .map((attribute) => attribute.id)
-    // expiry_date and pin are always proven: the circuit checks expiry and derives the nullifier from pin
-    .filter(
-      (attributeId) => candidates.has(attributeId) || attributeId === "expiry_date" || attributeId === "pin",
-    );
+    // expiry_date is always proven (the circuit checks it); everything else only when a requirement needs it
+    .filter((attributeId) => candidates.has(attributeId) || attributeId === "expiry_date");
 }
 
 function isElectionExpired(election: ChainElection) {
@@ -262,8 +260,8 @@ export default function RegisterEligibilityScreen() {
           throw new Error("This election registration window has ended.");
         }
 
-        const wallet = await getOrCreateDeviceWallet();
-        const alreadyRegistered = await isUserRegistered(electionId, wallet.address);
+        const voterWallet = await getVoterWalletForElection(electionId);
+        const alreadyRegistered = await isUserRegistered(electionId, voterWallet.address);
         if (alreadyRegistered) {
           throw new Error("This wallet is already registered for the election.");
         }
@@ -404,12 +402,13 @@ export default function RegisterEligibilityScreen() {
         }`,
       );
 
-      const wallet = await getOrCreateDeviceWallet();
+      // The proof binds this survey's own voter wallet; the relayer submits it and the token is minted to it
+      const voterWallet = await getVoterWalletForElection(electionId);
       const proofInput = buildEligibilityCircuitInputFromToken(sdJwtToken, {
         // The contract accepts today's or yesterday's UTC date
         currentDate: getUtcYyyyMmDd(),
         electionId: String(electionId),
-        voter: wallet.address,
+        voter: voterWallet.address,
         minAge: eligibilitySettings.minAge,
         enableAgeCheck: eligibilitySettings.enableAgeCheck,
         requiredCountry: locationSettings.requiredCountry,
@@ -497,7 +496,7 @@ export default function RegisterEligibilityScreen() {
       }
       logProof(`Proof generated (${timingSummary}). Checking it against the contract...`);
 
-      const registrationError = await checkRegistrationOnChain(electionId, wallet.address, calldata);
+      const registrationError = await checkRegistrationOnChain(electionId, voterWallet.address, calldata);
       if (registrationError === "Invalid ZK proof") {
         // rust-witness does not enforce circuit constraints, so an ineligible credential still yields a
         // (non-verifying) proof instead of failing during generation
