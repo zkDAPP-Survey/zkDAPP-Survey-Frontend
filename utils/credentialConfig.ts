@@ -118,6 +118,7 @@ export const CREDENTIAL_TYPES: CredentialTypeConfig[] = [
       { id: 'last_name', label: 'Last Name', selected: true },
       { id: 'permit_number', label: 'Permit Number', selected: true },
       { id: 'expiry_date', label: 'Expiry Date', selected: false },
+      { id: 'pin', label: 'Personal Number', selected: false },
     ],
   },
   {
@@ -136,6 +137,7 @@ export const CREDENTIAL_TYPES: CredentialTypeConfig[] = [
       { id: 'issuance_date', label: 'Issuance Date', selected: true },
       { id: 'expiry_date', label: 'Expiry Date', selected: true },
       { id: 'issuing_country', label: 'Issuing Country', selected: true },
+      { id: 'pin', label: 'Personal Number', selected: false },
     ],
   },
 ];

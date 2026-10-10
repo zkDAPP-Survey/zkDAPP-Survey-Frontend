@@ -20,120 +20,129 @@ extern "C" {
     int8_t poll_result
     );
     typedef void
-    (*UniffiForeignFutureDroppedCallback)(
+    (*UniffiForeignFutureFree)(
     uint64_t handle
     );
     typedef void
     (*UniffiCallbackInterfaceFree)(
     uint64_t handle
-    );
-    typedef uint64_t
-    (*UniffiCallbackInterfaceClone)(
-    uint64_t handle
-    );typedef struct UniffiForeignFutureDroppedCallbackStruct {
+    );typedef struct UniffiForeignFuture {
         uint64_t handle;
-        UniffiForeignFutureDroppedCallback free;
-    } UniffiForeignFutureDroppedCallbackStruct;typedef struct UniffiForeignFutureResultU8 {
+        UniffiForeignFutureFree free;
+    } UniffiForeignFuture;typedef struct UniffiForeignFutureStructU8 {
         uint8_t return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultU8;
+    } UniffiForeignFutureStructU8;
     typedef void
     (*UniffiForeignFutureCompleteU8)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultU8 result
-    );typedef struct UniffiForeignFutureResultI8 {
+    UniffiForeignFutureStructU8 result
+    );typedef struct UniffiForeignFutureStructI8 {
         int8_t return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultI8;
+    } UniffiForeignFutureStructI8;
     typedef void
     (*UniffiForeignFutureCompleteI8)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultI8 result
-    );typedef struct UniffiForeignFutureResultU16 {
+    UniffiForeignFutureStructI8 result
+    );typedef struct UniffiForeignFutureStructU16 {
         uint16_t return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultU16;
+    } UniffiForeignFutureStructU16;
     typedef void
     (*UniffiForeignFutureCompleteU16)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultU16 result
-    );typedef struct UniffiForeignFutureResultI16 {
+    UniffiForeignFutureStructU16 result
+    );typedef struct UniffiForeignFutureStructI16 {
         int16_t return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultI16;
+    } UniffiForeignFutureStructI16;
     typedef void
     (*UniffiForeignFutureCompleteI16)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultI16 result
-    );typedef struct UniffiForeignFutureResultU32 {
+    UniffiForeignFutureStructI16 result
+    );typedef struct UniffiForeignFutureStructU32 {
         uint32_t return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultU32;
+    } UniffiForeignFutureStructU32;
     typedef void
     (*UniffiForeignFutureCompleteU32)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultU32 result
-    );typedef struct UniffiForeignFutureResultI32 {
+    UniffiForeignFutureStructU32 result
+    );typedef struct UniffiForeignFutureStructI32 {
         int32_t return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultI32;
+    } UniffiForeignFutureStructI32;
     typedef void
     (*UniffiForeignFutureCompleteI32)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultI32 result
-    );typedef struct UniffiForeignFutureResultU64 {
+    UniffiForeignFutureStructI32 result
+    );typedef struct UniffiForeignFutureStructU64 {
         uint64_t return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultU64;
+    } UniffiForeignFutureStructU64;
     typedef void
     (*UniffiForeignFutureCompleteU64)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultU64 result
-    );typedef struct UniffiForeignFutureResultI64 {
+    UniffiForeignFutureStructU64 result
+    );typedef struct UniffiForeignFutureStructI64 {
         int64_t return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultI64;
+    } UniffiForeignFutureStructI64;
     typedef void
     (*UniffiForeignFutureCompleteI64)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultI64 result
-    );typedef struct UniffiForeignFutureResultF32 {
+    UniffiForeignFutureStructI64 result
+    );typedef struct UniffiForeignFutureStructF32 {
         float return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultF32;
+    } UniffiForeignFutureStructF32;
     typedef void
     (*UniffiForeignFutureCompleteF32)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultF32 result
-    );typedef struct UniffiForeignFutureResultF64 {
+    UniffiForeignFutureStructF32 result
+    );typedef struct UniffiForeignFutureStructF64 {
         double return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultF64;
+    } UniffiForeignFutureStructF64;
     typedef void
     (*UniffiForeignFutureCompleteF64)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultF64 result
-    );typedef struct UniffiForeignFutureResultRustBuffer {
+    UniffiForeignFutureStructF64 result
+    );typedef struct UniffiForeignFutureStructPointer {
+        void * return_value;
+        RustCallStatus call_status;
+    } UniffiForeignFutureStructPointer;
+    typedef void
+    (*UniffiForeignFutureCompletePointer)(
+    uint64_t callback_data, 
+    UniffiForeignFutureStructPointer result
+    );typedef struct UniffiForeignFutureStructRustBuffer {
         RustBuffer return_value;
         RustCallStatus call_status;
-    } UniffiForeignFutureResultRustBuffer;
+    } UniffiForeignFutureStructRustBuffer;
     typedef void
     (*UniffiForeignFutureCompleteRustBuffer)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultRustBuffer result
-    );typedef struct UniffiForeignFutureResultVoid {
+    UniffiForeignFutureStructRustBuffer result
+    );typedef struct UniffiForeignFutureStructVoid {
         RustCallStatus call_status;
-    } UniffiForeignFutureResultVoid;
+    } UniffiForeignFutureStructVoid;
     typedef void
     (*UniffiForeignFutureCompleteVoid)(
     uint64_t callback_data, 
-    UniffiForeignFutureResultVoid result
+    UniffiForeignFutureStructVoid result
     );
     RustBuffer uniffi_zksurvey_fn_func_generate_circom_proof(
         RustBuffer zkey_path, 
         RustBuffer circuit_inputs, 
         RustBuffer proof_lib, 
         RustCallStatus *uniffi_out_err
+    );
+    /*handle*/ uint64_t uniffi_zksurvey_fn_func_generate_circom_proof_timed(
+        RustBuffer zkey_path, 
+        RustBuffer circuit_inputs, 
+        RustBuffer proof_lib
     );
     RustBuffer uniffi_zksurvey_fn_func_generate_gnark_proof(
         RustBuffer _r1cs_path, 
@@ -359,6 +368,21 @@ extern "C" {
         /*handle*/ uint64_t handle, 
         RustCallStatus *uniffi_out_err
     );
+    void ffi_zksurvey_rust_future_poll_pointer(
+        /*handle*/ uint64_t handle, 
+        UniffiRustFutureContinuationCallback callback, 
+        /*handle*/ uint64_t callback_data
+    );
+    void ffi_zksurvey_rust_future_cancel_pointer(
+        /*handle*/ uint64_t handle
+    );
+    void ffi_zksurvey_rust_future_free_pointer(
+        /*handle*/ uint64_t handle
+    );
+    void * ffi_zksurvey_rust_future_complete_pointer(
+        /*handle*/ uint64_t handle, 
+        RustCallStatus *uniffi_out_err
+    );
     void ffi_zksurvey_rust_future_poll_rust_buffer(
         /*handle*/ uint64_t handle, 
         UniffiRustFutureContinuationCallback callback, 
@@ -390,6 +414,8 @@ extern "C" {
         RustCallStatus *uniffi_out_err
     );
     uint16_t uniffi_zksurvey_checksum_func_generate_circom_proof(
+    );
+    uint16_t uniffi_zksurvey_checksum_func_generate_circom_proof_timed(
     );
     uint16_t uniffi_zksurvey_checksum_func_generate_gnark_proof(
     );
@@ -703,7 +729,7 @@ namespace uniffi::zksurvey::cb::rustfuturecontinuationcallback {
             rs_pollResult);
     }
 
-    [[maybe_unused]] static UniffiRustFutureContinuationCallback
+    static UniffiRustFutureContinuationCallback
     makeCallbackFunction( // uniffi::zksurvey::cb::rustfuturecontinuationcallback
                     jsi::Runtime &rt,
                      std::shared_ptr<uniffi_runtime::UniffiCallInvoker> callInvoker,
@@ -750,9 +776,49 @@ namespace uniffi::zksurvey::cb::rustfuturecontinuationcallback {
         rsLambda = nullptr;
     }
 } // namespace uniffi::zksurvey::cb::rustfuturecontinuationcallback
-    // Implementation of callback function calling from Rust to JS ForeignFutureDroppedCallback
+    // Implementation of callback function calling from JS to Rust ForeignFutureFree,
+    // passed from Rust to JS as part of async callbacks.
+namespace uniffi::zksurvey {
+using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-// Callback function: uniffi::zksurvey::cb::foreignfuturedroppedcallback::UniffiForeignFutureDroppedCallback
+template <> struct Bridging<UniffiForeignFutureFree> {
+  static jsi::Value toJs(jsi::Runtime &rt, std::shared_ptr<CallInvoker> callInvoker, UniffiForeignFutureFree rsCallback) {
+    return jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "--ForeignFutureFree"),
+        1,
+        [rsCallback, callInvoker](
+            jsi::Runtime &rt,
+            const jsi::Value &thisValue,
+            const jsi::Value *arguments,
+            size_t count) -> jsi::Value
+        {
+            return intoRust(rt, callInvoker, thisValue, arguments, count, rsCallback);
+        }
+    );
+  }
+
+  static jsi::Value intoRust(
+      jsi::Runtime &rt,
+      std::shared_ptr<CallInvoker> callInvoker,
+      const jsi::Value &thisValue,
+      const jsi::Value *args,
+      size_t count,
+      UniffiForeignFutureFree func) {
+    // Convert the arguments into the Rust, with Bridging<T>::fromJs,
+    // then call the rs_callback with those arguments.
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+  }
+};
+} // namespace uniffi::zksurvey
+    // Implementation of free callback function CallbackInterfaceFree
+
+
+// Callback function: uniffi::zksurvey::st::foreignfuture::foreignfuture::free::UniffiCallbackInterfaceFree
 //
 // We have the following constraints:
 // - we need to pass a function pointer to Rust.
@@ -764,7 +830,7 @@ namespace uniffi::zksurvey::cb::rustfuturecontinuationcallback {
 //
 // We then give the `callback` function pointer to Rust which will call the lambda sometime in the
 // future.
-namespace uniffi::zksurvey::cb::foreignfuturedroppedcallback {
+namespace uniffi::zksurvey::st::foreignfuture::foreignfuture::free {
     using namespace facebook;
 
     // We need to store a lambda in a global so we can call it from
@@ -795,7 +861,7 @@ namespace uniffi::zksurvey::cb::foreignfuturedroppedcallback {
 
             
         } catch (const jsi::JSError &error) {
-            std::cout << "Error in callback UniffiForeignFutureDroppedCallback: "
+            std::cout << "Error in callback UniffiCallbackInterfaceFree: "
                     << error.what() << std::endl;
             throw error;
         }
@@ -821,8 +887,8 @@ namespace uniffi::zksurvey::cb::foreignfuturedroppedcallback {
             rs_handle);
     }
 
-    [[maybe_unused]] static UniffiForeignFutureDroppedCallback
-    makeCallbackFunction( // uniffi::zksurvey::cb::foreignfuturedroppedcallback
+    static UniffiCallbackInterfaceFree
+    makeCallbackFunction( // uniffi::zksurvey::st::foreignfuture::foreignfuture::free
                     jsi::Runtime &rt,
                      std::shared_ptr<uniffi_runtime::UniffiCallInvoker> callInvoker,
                      const jsi::Value &value) {
@@ -865,35 +931,33 @@ namespace uniffi::zksurvey::cb::foreignfuturedroppedcallback {
         // then the pointer will no longer be left dangling.
         rsLambda = nullptr;
     }
-} // namespace uniffi::zksurvey::cb::foreignfuturedroppedcallback
-    // Implementation of free callback function CallbackInterfaceFree
-
+} // namespace uniffi::zksurvey::st::foreignfuture::foreignfuture::free
 namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureDroppedCallbackStruct> {
-  static UniffiForeignFutureDroppedCallbackStruct fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFuture> {
+  static UniffiForeignFuture fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureDroppedCallbackStruct");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFuture");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureDroppedCallbackStruct rsObject;
+    UniffiForeignFuture rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.handle = uniffi_jsi::Bridging<uint64_t>::fromJs(
         rt, callInvoker,
         jsObject.getProperty(rt, "handle")
       );
-    rsObject.free = uniffi::zksurvey::cb::foreignfuturedroppedcallback::makeCallbackFunction(
+    rsObject.free = uniffi::zksurvey::st::foreignfuture::foreignfuture::free::makeCallbackFunction(
           rt, callInvoker, jsObject.getProperty(rt, "free")
         );
 
@@ -906,30 +970,30 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultU8> {
-  static UniffiForeignFutureResultU8 fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructU8> {
+  static UniffiForeignFutureStructU8 fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultU8");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructU8");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultU8 rsObject;
+    UniffiForeignFutureStructU8 rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi_jsi::Bridging<uint8_t>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -968,7 +1032,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteU8> {
       UniffiForeignFutureCompleteU8 func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultU8>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructU8>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -980,30 +1044,30 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultI8> {
-  static UniffiForeignFutureResultI8 fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructI8> {
+  static UniffiForeignFutureStructI8 fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultI8");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructI8");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultI8 rsObject;
+    UniffiForeignFutureStructI8 rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi_jsi::Bridging<int8_t>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1042,7 +1106,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteI8> {
       UniffiForeignFutureCompleteI8 func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultI8>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructI8>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1054,30 +1118,30 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultU16> {
-  static UniffiForeignFutureResultU16 fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructU16> {
+  static UniffiForeignFutureStructU16 fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultU16");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructU16");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultU16 rsObject;
+    UniffiForeignFutureStructU16 rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi_jsi::Bridging<uint16_t>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1116,7 +1180,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteU16> {
       UniffiForeignFutureCompleteU16 func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultU16>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructU16>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1128,30 +1192,30 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultI16> {
-  static UniffiForeignFutureResultI16 fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructI16> {
+  static UniffiForeignFutureStructI16 fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultI16");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructI16");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultI16 rsObject;
+    UniffiForeignFutureStructI16 rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi_jsi::Bridging<int16_t>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1190,7 +1254,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteI16> {
       UniffiForeignFutureCompleteI16 func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultI16>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructI16>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1202,30 +1266,30 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultU32> {
-  static UniffiForeignFutureResultU32 fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructU32> {
+  static UniffiForeignFutureStructU32 fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultU32");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructU32");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultU32 rsObject;
+    UniffiForeignFutureStructU32 rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi_jsi::Bridging<uint32_t>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1264,7 +1328,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteU32> {
       UniffiForeignFutureCompleteU32 func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultU32>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructU32>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1276,30 +1340,30 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultI32> {
-  static UniffiForeignFutureResultI32 fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructI32> {
+  static UniffiForeignFutureStructI32 fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultI32");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructI32");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultI32 rsObject;
+    UniffiForeignFutureStructI32 rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi_jsi::Bridging<int32_t>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1338,7 +1402,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteI32> {
       UniffiForeignFutureCompleteI32 func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultI32>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructI32>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1350,30 +1414,30 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultU64> {
-  static UniffiForeignFutureResultU64 fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructU64> {
+  static UniffiForeignFutureStructU64 fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultU64");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructU64");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultU64 rsObject;
+    UniffiForeignFutureStructU64 rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi_jsi::Bridging<uint64_t>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1412,7 +1476,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteU64> {
       UniffiForeignFutureCompleteU64 func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultU64>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructU64>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1424,30 +1488,30 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultI64> {
-  static UniffiForeignFutureResultI64 fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructI64> {
+  static UniffiForeignFutureStructI64 fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultI64");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructI64");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultI64 rsObject;
+    UniffiForeignFutureStructI64 rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi_jsi::Bridging<int64_t>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1486,7 +1550,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteI64> {
       UniffiForeignFutureCompleteI64 func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultI64>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructI64>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1498,30 +1562,30 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultF32> {
-  static UniffiForeignFutureResultF32 fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructF32> {
+  static UniffiForeignFutureStructF32 fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultF32");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructF32");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultF32 rsObject;
+    UniffiForeignFutureStructF32 rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi_jsi::Bridging<float>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1560,7 +1624,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteF32> {
       UniffiForeignFutureCompleteF32 func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultF32>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructF32>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1572,30 +1636,30 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultF64> {
-  static UniffiForeignFutureResultF64 fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructF64> {
+  static UniffiForeignFutureStructF64 fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultF64");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructF64");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultF64 rsObject;
+    UniffiForeignFutureStructF64 rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi_jsi::Bridging<double>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1634,7 +1698,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteF64> {
       UniffiForeignFutureCompleteF64 func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultF64>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructF64>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1646,30 +1710,104 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultRustBuffer> {
-  static UniffiForeignFutureResultRustBuffer fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructPointer> {
+  static UniffiForeignFutureStructPointer fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultRustBuffer");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructPointer");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultRustBuffer rsObject;
+    UniffiForeignFutureStructPointer rsObject;
+
+    // Create the vtable from the js callbacks.
+    rsObject.return_value = uniffi_jsi::Bridging<void *>::fromJs(
+        rt, callInvoker,
+        jsObject.getProperty(rt, "returnValue")
+      );
+    rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
+        rt, callInvoker,
+        jsObject.getProperty(rt, "callStatus")
+      );
+
+    return rsObject;
+  }
+};
+
+} // namespace uniffi::zksurvey
+    // Implementation of callback function calling from JS to Rust ForeignFutureCompletePointer,
+    // passed from Rust to JS as part of async callbacks.
+namespace uniffi::zksurvey {
+using CallInvoker = uniffi_runtime::UniffiCallInvoker;
+
+template <> struct Bridging<UniffiForeignFutureCompletePointer> {
+  static jsi::Value toJs(jsi::Runtime &rt, std::shared_ptr<CallInvoker> callInvoker, UniffiForeignFutureCompletePointer rsCallback) {
+    return jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "--ForeignFutureCompletePointer"),
+        2,
+        [rsCallback, callInvoker](
+            jsi::Runtime &rt,
+            const jsi::Value &thisValue,
+            const jsi::Value *arguments,
+            size_t count) -> jsi::Value
+        {
+            return intoRust(rt, callInvoker, thisValue, arguments, count, rsCallback);
+        }
+    );
+  }
+
+  static jsi::Value intoRust(
+      jsi::Runtime &rt,
+      std::shared_ptr<CallInvoker> callInvoker,
+      const jsi::Value &thisValue,
+      const jsi::Value *args,
+      size_t count,
+      UniffiForeignFutureCompletePointer func) {
+    // Convert the arguments into the Rust, with Bridging<T>::fromJs,
+    // then call the rs_callback with those arguments.
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructPointer>::fromJs(rt, callInvoker, args[1])
+        );
+
+        
+        return jsi::Value::undefined();
+  }
+};
+} // namespace uniffi::zksurvey
+namespace uniffi::zksurvey {
+using namespace facebook;
+using CallInvoker = uniffi_runtime::UniffiCallInvoker;
+
+template <> struct Bridging<UniffiForeignFutureStructRustBuffer> {
+  static UniffiForeignFutureStructRustBuffer fromJs(jsi::Runtime &rt,
+    std::shared_ptr<CallInvoker> callInvoker,
+    const jsi::Value &jsValue
+  ) {
+    // Check if the input is an object
+    if (!jsValue.isObject()) {
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructRustBuffer");
+    }
+
+    // Get the object from the jsi::Value
+    auto jsObject = jsValue.getObject(rt);
+
+    // Create the vtable struct
+    UniffiForeignFutureStructRustBuffer rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.return_value = uniffi::zksurvey::Bridging<RustBuffer>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "return_value")
+        jsObject.getProperty(rt, "returnValue")
       );
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1708,7 +1846,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteRustBuffer> {
       UniffiForeignFutureCompleteRustBuffer func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultRustBuffer>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructRustBuffer>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1720,26 +1858,26 @@ namespace uniffi::zksurvey {
 using namespace facebook;
 using CallInvoker = uniffi_runtime::UniffiCallInvoker;
 
-template <> struct Bridging<UniffiForeignFutureResultVoid> {
-  static UniffiForeignFutureResultVoid fromJs(jsi::Runtime &rt,
+template <> struct Bridging<UniffiForeignFutureStructVoid> {
+  static UniffiForeignFutureStructVoid fromJs(jsi::Runtime &rt,
     std::shared_ptr<CallInvoker> callInvoker,
     const jsi::Value &jsValue
   ) {
     // Check if the input is an object
     if (!jsValue.isObject()) {
-      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureResultVoid");
+      throw jsi::JSError(rt, "Expected an object for UniffiForeignFutureStructVoid");
     }
 
     // Get the object from the jsi::Value
     auto jsObject = jsValue.getObject(rt);
 
     // Create the vtable struct
-    UniffiForeignFutureResultVoid rsObject;
+    UniffiForeignFutureStructVoid rsObject;
 
     // Create the vtable from the js callbacks.
     rsObject.call_status = uniffi::zksurvey::Bridging<RustCallStatus>::fromJs(
         rt, callInvoker,
-        jsObject.getProperty(rt, "call_status")
+        jsObject.getProperty(rt, "callStatus")
       );
 
     return rsObject;
@@ -1778,7 +1916,7 @@ template <> struct Bridging<UniffiForeignFutureCompleteVoid> {
       UniffiForeignFutureCompleteVoid func) {
     // Convert the arguments into the Rust, with Bridging<T>::fromJs,
     // then call the rs_callback with those arguments.
-        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureResultVoid>::fromJs(rt, callInvoker, args[1])
+        func(uniffi_jsi::Bridging<uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiForeignFutureStructVoid>::fromJs(rt, callInvoker, args[1])
         );
 
         
@@ -1825,28 +1963,20 @@ NativeZksurvey::NativeZksurvey(
             return this->cpp_uniffi_internal_fn_func_ffi__string_to_byte_length(rt, thisVal, args, count);
         }
     );
-    props["ubrn_uniffi_internal_fn_func_ffi__string_to_buffer"] = jsi::Function::createFromHostFunction(
+    props["ubrn_uniffi_internal_fn_func_ffi__string_to_arraybuffer"] = jsi::Function::createFromHostFunction(
         rt,
-        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_internal_fn_func_ffi__string_to_buffer"),
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_internal_fn_func_ffi__string_to_arraybuffer"),
         1,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
-            return this->cpp_uniffi_internal_fn_func_ffi__string_to_buffer(rt, thisVal, args, count);
+            return this->cpp_uniffi_internal_fn_func_ffi__string_to_arraybuffer(rt, thisVal, args, count);
         }
     );
-    props["ubrn_uniffi_internal_fn_func_ffi__string_from_buffer"] = jsi::Function::createFromHostFunction(
+    props["ubrn_uniffi_internal_fn_func_ffi__arraybuffer_to_string"] = jsi::Function::createFromHostFunction(
         rt,
-        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_internal_fn_func_ffi__string_from_buffer"),
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_internal_fn_func_ffi__arraybuffer_to_string"),
         1,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
-            return this->cpp_uniffi_internal_fn_func_ffi__string_from_buffer(rt, thisVal, args, count);
-        }
-    );
-    props["ubrn_uniffi_internal_fn_func_ffi__read_string_from_buffer"] = jsi::Function::createFromHostFunction(
-        rt,
-        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_internal_fn_func_ffi__read_string_from_buffer"),
-        3,
-        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
-            return this->cpp_uniffi_internal_fn_func_ffi__read_string_from_buffer(rt, thisVal, args, count);
+            return this->cpp_uniffi_internal_fn_func_ffi__arraybuffer_to_string(rt, thisVal, args, count);
         }
     );
     props["ubrn_uniffi_zksurvey_fn_func_generate_circom_proof"] = jsi::Function::createFromHostFunction(
@@ -1855,6 +1985,14 @@ NativeZksurvey::NativeZksurvey(
         3,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_zksurvey_fn_func_generate_circom_proof(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_zksurvey_fn_func_generate_circom_proof_timed"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_zksurvey_fn_func_generate_circom_proof_timed"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_zksurvey_fn_func_generate_circom_proof_timed(rt, thisVal, args, count);
         }
     );
     props["ubrn_uniffi_zksurvey_fn_func_generate_gnark_proof"] = jsi::Function::createFromHostFunction(
@@ -1929,12 +2067,436 @@ NativeZksurvey::NativeZksurvey(
             return this->cpp_uniffi_zksurvey_fn_func_verify_noir_proof(rt, thisVal, args, count);
         }
     );
+    props["ubrn_ffi_zksurvey_rust_future_poll_u8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_u8"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_u8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_u8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_u8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_u8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_u8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_u8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_u8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_u8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_u8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_u8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_i8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_i8"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_i8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_i8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_i8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_i8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_i8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_i8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_i8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_i8"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_i8"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_i8(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_u16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_u16"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_u16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_u16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_u16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_u16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_u16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_u16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_u16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_u16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_u16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_u16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_i16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_i16"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_i16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_i16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_i16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_i16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_i16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_i16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_i16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_i16"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_i16"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_i16(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_u32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_u32"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_u32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_u32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_u32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_u32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_u32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_u32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_u32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_u32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_u32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_u32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_i32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_i32"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_i32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_i32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_i32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_i32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_i32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_i32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_i32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_i32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_i32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_i32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_u64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_u64"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_u64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_u64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_u64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_u64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_u64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_u64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_u64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_u64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_u64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_u64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_i64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_i64"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_i64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_i64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_i64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_i64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_i64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_i64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_i64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_i64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_i64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_i64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_f32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_f32"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_f32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_f32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_f32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_f32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_f32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_f32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_f32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_f32"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_f32"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_f32(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_f64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_f64"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_f64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_f64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_f64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_f64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_f64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_f64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_f64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_f64"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_f64"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_f64(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_pointer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_pointer"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_pointer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_pointer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_pointer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_pointer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_pointer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_pointer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_pointer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_pointer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_pointer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_pointer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_rust_buffer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_rust_buffer"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_rust_buffer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_rust_buffer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_rust_buffer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_rust_buffer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_rust_buffer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_rust_buffer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_rust_buffer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_rust_buffer"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_rust_buffer"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_rust_buffer(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_poll_void"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_poll_void"),
+        3,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_poll_void(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_cancel_void"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_cancel_void"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_cancel_void(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_free_void"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_free_void"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_free_void(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_ffi_zksurvey_rust_future_complete_void"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_ffi_zksurvey_rust_future_complete_void"),
+        1,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_ffi_zksurvey_rust_future_complete_void(rt, thisVal, args, count);
+        }
+    );
     props["ubrn_uniffi_zksurvey_checksum_func_generate_circom_proof"] = jsi::Function::createFromHostFunction(
         rt,
         jsi::PropNameID::forAscii(rt, "ubrn_uniffi_zksurvey_checksum_func_generate_circom_proof"),
         0,
         [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
             return this->cpp_uniffi_zksurvey_checksum_func_generate_circom_proof(rt, thisVal, args, count);
+        }
+    );
+    props["ubrn_uniffi_zksurvey_checksum_func_generate_circom_proof_timed"] = jsi::Function::createFromHostFunction(
+        rt,
+        jsi::PropNameID::forAscii(rt, "ubrn_uniffi_zksurvey_checksum_func_generate_circom_proof_timed"),
+        0,
+        [this](jsi::Runtime &rt, const jsi::Value &thisVal, const jsi::Value *args, size_t count) -> jsi::Value {
+            return this->cpp_uniffi_zksurvey_checksum_func_generate_circom_proof_timed(rt, thisVal, args, count);
         }
     );
     props["ubrn_uniffi_zksurvey_checksum_func_generate_gnark_proof"] = jsi::Function::createFromHostFunction(
@@ -2054,10 +2616,8 @@ void NativeZksurvey::set(jsi::Runtime& rt, const jsi::PropNameID& name, const js
 NativeZksurvey::~NativeZksurvey() {
     // Cleanup for callback function RustFutureContinuationCallback
 uniffi::zksurvey::cb::rustfuturecontinuationcallback::cleanup();
-    // Cleanup for callback function ForeignFutureDroppedCallback
-uniffi::zksurvey::cb::foreignfuturedroppedcallback::cleanup();
     // Cleanup for "free" callback function CallbackInterfaceFree
-
+uniffi::zksurvey::st::foreignfuture::foreignfuture::free::cleanup();
 }
 
 // Utility functions for serialization/deserialization of strings.
@@ -2065,21 +2625,12 @@ jsi::Value NativeZksurvey::cpp_uniffi_internal_fn_func_ffi__string_to_byte_lengt
     return uniffi_jsi::Bridging<std::string>::string_to_bytelength(rt, args[0]);
 }
 
-jsi::Value NativeZksurvey::cpp_uniffi_internal_fn_func_ffi__string_to_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+jsi::Value NativeZksurvey::cpp_uniffi_internal_fn_func_ffi__string_to_arraybuffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
     return uniffi_jsi::Bridging<std::string>::string_to_arraybuffer(rt, args[0]);
 }
 
-jsi::Value NativeZksurvey::cpp_uniffi_internal_fn_func_ffi__string_from_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+jsi::Value NativeZksurvey::cpp_uniffi_internal_fn_func_ffi__arraybuffer_to_string(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
     return uniffi_jsi::Bridging<std::string>::arraybuffer_to_string(rt, args[0]);
-}
-
-jsi::Value NativeZksurvey::cpp_uniffi_internal_fn_func_ffi__read_string_from_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
-    // read_string_from_buffer(buffer, offset, length) — reads a UTF-8 slice
-    auto buffer = uniffi_jsi::Bridging<jsi::ArrayBuffer>::value_to_arraybuffer(rt, args[0]);
-    auto offset = static_cast<size_t>(args[1].asNumber());
-    auto length = static_cast<size_t>(args[2].asNumber());
-    auto string = jsi::String::createFromUtf8(rt, buffer.data(rt) + offset, length);
-    return jsi::Value(rt, string);
 }
 
 // Methods calling directly into the uniffi generated C API of the Rust crate.
@@ -2092,6 +2643,13 @@ jsi::Value NativeZksurvey::cpp_uniffi_zksurvey_fn_func_generate_circom_proof(jsi
 
         
         return uniffi::zksurvey::Bridging<RustBuffer>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_uniffi_zksurvey_fn_func_generate_circom_proof_timed(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_zksurvey_fn_func_generate_circom_proof_timed(uniffi::zksurvey::Bridging<RustBuffer>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<RustBuffer>::fromJs(rt, callInvoker, args[1]), uniffi::zksurvey::Bridging<RustBuffer>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return uniffi_jsi::Bridging</*handle*/ uint64_t>::toJs(rt, callInvoker, value);
 }
 jsi::Value NativeZksurvey::cpp_uniffi_zksurvey_fn_func_generate_gnark_proof(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
@@ -2182,8 +2740,418 @@ jsi::Value NativeZksurvey::cpp_uniffi_zksurvey_fn_func_verify_noir_proof(jsi::Ru
         
         return uniffi_jsi::Bridging<int8_t>::toJs(rt, callInvoker, value);
 }
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_u8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_u8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_u8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_u8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_u8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_u8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_u8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_u8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<uint8_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_i8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_i8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_i8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_i8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_i8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_i8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_i8(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_i8(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int8_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_u16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_u16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_u16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_u16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_u16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_u16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_u16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_u16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_i16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_i16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_i16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_i16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_i16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_i16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_i16(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_i16(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_u32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_u32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_u32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_u32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_u32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_u32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_u32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_u32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<uint32_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_i32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_i32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_i32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_i32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_i32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_i32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_i32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_i32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int32_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_u64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_u64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_u64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_u64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_u64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_u64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_u64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_u64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<uint64_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_i64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_i64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_i64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_i64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_i64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_i64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_i64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_i64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<int64_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_f32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_f32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_f32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_f32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_f32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_f32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_f32(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_f32(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<float>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_f64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_f64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_f64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_f64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_f64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_f64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_f64(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_f64(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<double>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_pointer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_pointer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_pointer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_pointer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_pointer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_pointer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_pointer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_pointer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi_jsi::Bridging<void *>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_rust_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_rust_buffer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_rust_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_rust_buffer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_rust_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_rust_buffer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_rust_buffer(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        auto value = ffi_zksurvey_rust_future_complete_rust_buffer(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return uniffi::zksurvey::Bridging<RustBuffer>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_poll_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_poll_void(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), uniffi::zksurvey::Bridging<UniffiRustFutureContinuationCallback>::fromJs(rt, callInvoker, args[1]), uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[2])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_cancel_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_cancel_void(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_free_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        ffi_zksurvey_rust_future_free_void(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0])
+        );
+
+        
+        return jsi::Value::undefined();
+}
+jsi::Value NativeZksurvey::cpp_ffi_zksurvey_rust_future_complete_void(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        RustCallStatus status = uniffi::zksurvey::Bridging<RustCallStatus>::rustSuccess(rt);
+        ffi_zksurvey_rust_future_complete_void(uniffi_jsi::Bridging</*handle*/ uint64_t>::fromJs(rt, callInvoker, args[0]), 
+            &status
+        );
+        uniffi::zksurvey::Bridging<RustCallStatus>::copyIntoJs(rt, callInvoker, status, args[count - 1]);
+
+        
+        return jsi::Value::undefined();
+}
 jsi::Value NativeZksurvey::cpp_uniffi_zksurvey_checksum_func_generate_circom_proof(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
         auto value = uniffi_zksurvey_checksum_func_generate_circom_proof(
+        );
+
+        
+        return uniffi_jsi::Bridging<uint16_t>::toJs(rt, callInvoker, value);
+}
+jsi::Value NativeZksurvey::cpp_uniffi_zksurvey_checksum_func_generate_circom_proof_timed(jsi::Runtime& rt, const jsi::Value& thisVal, const jsi::Value* args, size_t count) {
+        auto value = uniffi_zksurvey_checksum_func_generate_circom_proof_timed(
         );
 
         

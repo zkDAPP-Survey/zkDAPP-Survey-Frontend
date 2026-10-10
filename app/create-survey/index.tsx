@@ -140,7 +140,9 @@ export default function CreateSurvey() {
   // Validation
   const nameOk = surveyName.trim().length > 0;
   const descOk = description.trim().length > 0;
-  const durationOk = !!startDate && !!endDate;
+  // The contract rejects createElection unless endDate > startDate
+  const datesSet = !!startDate && !!endDate;
+  const durationOk = datesSet && endDate!.getTime() > startDate!.getTime();
   const isValid = nameOk && descOk && durationOk;
 
   const nameError = touched.name && !nameOk;
@@ -339,7 +341,11 @@ export default function CreateSurvey() {
             </View>
           )}
 
-          {durationError && <Text style={styles.errorText}>Select start and end dates</Text>}
+          {durationError && (
+            <Text style={styles.errorText}>
+              {datesSet ? "End must be later than start" : "Select start and end dates"}
+            </Text>
+          )}
 
           {/* ANDROID picker */}
           {Platform.OS === "android" && pickerOpen && (

@@ -27,6 +27,7 @@ import {
   Uint256Like,
 } from "@/types/election";
 import { hashJson } from "@/utils/hash";
+import { computeEligibilityHash, resolveEligibilityRules } from "@/utils/zk/eligibilityRules";
 import { getOrCreateDeviceWallet } from "@/utils/vocdoni/wallet";
 import { createVocdoniElectionFromTokenCensus } from "@/services/vocdoniService";
 import {
@@ -97,14 +98,17 @@ const encodeGroth16Proof = (proof: Groth16ProofCalldata) =>
   )}${encodeUint256(proof.pi_b[0][1])}${encodeUint256(proof.pi_b[1][0])}${encodeUint256(
     proof.pi_b[1][1]
   )}${encodeUint256(proof.pi_c[0])}${encodeUint256(proof.pi_c[1])}${proof.pubInputs
-    .slice(0, 20)
+    .slice(0, PUBLIC_INPUT_COUNT)
     .map(encodeUint256)
     .join("")}`;
 
+// Public signals of zk/build/v3: nullifier, issuer key, date, 16 survey rules, electionId, voter
+const PUBLIC_INPUT_COUNT = 22;
+
 const requireContractProofShape = (proof: Groth16ProofCalldata) => {
-  if (proof.pubInputs.length !== 20) {
+  if (proof.pubInputs.length !== PUBLIC_INPUT_COUNT) {
     throw new Error(
-      `The deployed registration contract expects 20 public inputs, but the generated proof has ${proof.pubInputs.length}. Deploy the updated verifier contract or use the matching proof service/circuit.`
+      `The deployed registration contract expects ${PUBLIC_INPUT_COUNT} public inputs, but the generated proof has ${proof.pubInputs.length}. Deploy the updated verifier contract or use the matching proof service/circuit.`
     );
   }
 };
@@ -112,15 +116,26 @@ const requireContractProofShape = (proof: Groth16ProofCalldata) => {
 const buildRegisterForElectionCallData = (electionId: number, proof: Groth16ProofCalldata) => {
   requireContractProofShape(proof);
   return `0x${stripHexPrefix(
-    getSelector("registerForElection(uint256,uint256[2],uint256[2][2],uint256[2],uint256[20])")
+    getSelector("registerForElection(uint256,uint256[2],uint256[2][2],uint256[2],uint256[22])")
   )}${encodeUint256(electionId)}${encodeGroth16Proof(proof)}`;
 };
 
 const buildVerifyProofViewCallData = (proof: Groth16ProofCalldata) => {
   requireContractProofShape(proof);
   return `0x${stripHexPrefix(
-    getSelector("verifyProofView(uint256[2],uint256[2][2],uint256[2],uint256[20])")
+    getSelector("verifyProofView(uint256[2],uint256[2][2],uint256[2],uint256[22])")
   )}${encodeGroth16Proof(proof)}`;
+};
+
+const buildCheckRegistrationCallData = (
+  electionId: number,
+  voter: string,
+  proof: Groth16ProofCalldata
+) => {
+  requireContractProofShape(proof);
+  return `0x${stripHexPrefix(
+    getSelector("checkRegistration(uint256,address,uint256[2],uint256[2][2],uint256[2],uint256[22])")
+  )}${encodeUint256(electionId)}${encodeAddress(voter)}${encodeGroth16Proof(proof)}`;
 };
 
 const buildStartElectionCallData = (
@@ -223,7 +238,29 @@ const normalizeTxError = (error: unknown) => {
     return new Error("Eligibility proof public input is out of range.");
   }
 
+  // ethers v5 wraps reverts during gas estimation as "cannot estimate gas"; surface the contract's reason
+  const revertReason = extractRevertReason(error);
+  if (revertReason) {
+    return new Error(`The contract rejected the transaction: ${revertReason}`);
+  }
+
   return error;
+};
+
+const extractRevertReason = (error: unknown): string | null => {
+  const candidates: unknown[] = [];
+  let current: any = error;
+  for (let depth = 0; current && depth < 4; depth += 1) {
+    candidates.push(current.reason, current.message, current.body);
+    current = current.error;
+  }
+  for (const candidate of candidates) {
+    const match = typeof candidate === "string" ? candidate.match(/execution reverted:\s*([^"\\]+)/i) : null;
+    if (match) {
+      return match[1].trim();
+    }
+  }
+  return null;
 };
 
 const ensureSepolia = async (provider: JsonRpcProvider) => {
@@ -328,7 +365,8 @@ export const createElectionOnChain = async (
   const metadata = buildMetadata(formData);
   const eligibility = buildEligibility(formData);
   const metadataHash = hashJson(metadata);
-  const eligibilityHash = hashJson(eligibility);
+  // Binds the survey to the requirement public inputs every registration proof must carry
+  const eligibilityHash = computeEligibilityHash(resolveEligibilityRules(eligibility.requirements));
   const metadataURI = await uploadElectionMetadataDocument(
     buildElectionMetadataDocument(metadata, eligibility)
   );
@@ -393,6 +431,21 @@ export const verifyEligibilityProofOnChain = async (proof: Groth16ProofCalldata)
   try {
     const response = await readContract(buildVerifyProofViewCallData(proof));
     return decodeBool(response);
+  } catch (error) {
+    throw normalizeTxError(error);
+  }
+};
+
+/** Returns "" when `voter` could register with this proof, otherwise the contract's rejection reason. */
+export const checkRegistrationOnChain = async (
+  electionId: number,
+  voter: string,
+  proof: Groth16ProofCalldata
+): Promise<string> => {
+  try {
+    const response = await readContract(buildCheckRegistrationCallData(electionId, voter, proof));
+    const payload = stripHexPrefix(response);
+    return decodeStringAt(payload, 0, decodeUint256(readWord(payload, 0)));
   } catch (error) {
     throw normalizeTxError(error);
   }

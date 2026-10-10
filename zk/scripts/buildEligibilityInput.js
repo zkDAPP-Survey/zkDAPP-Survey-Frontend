@@ -52,6 +52,11 @@ function buildEligibilityInput(source = {}) {
     districtKey: asString(source.districtKey),
     districtValue: asString(source.districtValue),
 
+    // ── PIN disclosure (always required; basis of the per-election nullifier) ──
+    pinSalt: asString(source.pinSalt),
+    pinKey: asString(source.pinKey),
+    pinValue: asString(source.pinValue),
+
     // ── Public requirement inputs ────────────────────────────────────────────
     currentDate: asString(source.currentDate),
     minAge: asString(source.minAge, '0'),
@@ -68,6 +73,10 @@ function buildEligibilityInput(source = {}) {
     // District check: up to 5 allowed encoded district values
     allowedDistricts: asPaddedArray(source.allowedDistricts, 5),
     enableDistrictCheck: asFlag(source.enableDistrictCheck),
+
+    // ── Binding: the contract only accepts the proof for this election and wallet ──
+    electionId: asString(source.electionId),
+    voter: asString(source.voter),
   };
 }
 

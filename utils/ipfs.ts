@@ -1,4 +1,4 @@
-import { IPFS_API_KEY, IPFS_GATEWAY_URL } from "@/config/ipfs";
+import { IPFS_API_KEY, IPFS_GATEWAY_URL, PINATA_JWT } from "@/config/ipfs";
 import { ElectionMetadataDocument } from "@/types/election";
 import { stableStringify } from "@/utils/hash";
 
@@ -8,6 +8,7 @@ const normalizeIpfsUri = (cidOrUri: string) =>
 const cidFromUri = (uri: string) => uri.replace(/^ipfs:\/\//i, "").replace(/^\/ipfs\//i, "");
 
 const LIGHTHOUSE_UPLOAD_URL = "https://upload.lighthouse.storage/api/v0/add?cid-version=1";
+const PINATA_UPLOAD_URL = "https://uploads.pinata.cloud/v3/files";
 
 const buildMultipartTextBody = ({
   fieldName,
@@ -15,14 +16,22 @@ const buildMultipartTextBody = ({
   contentType,
   text,
   boundary,
+  extraFields = {},
 }: {
   fieldName: string;
   fileName: string;
   contentType: string;
   text: string;
   boundary: string;
+  extraFields?: Record<string, string>;
 }) =>
   [
+    ...Object.entries(extraFields).flatMap(([name, value]) => [
+      `--${boundary}`,
+      `Content-Disposition: form-data; name="${name}"`,
+      "",
+      value,
+    ]),
     `--${boundary}`,
     `Content-Disposition: form-data; name="${fieldName}"; filename="${fileName}"`,
     `Content-Type: ${contentType}`,
@@ -40,12 +49,53 @@ export const resolveIpfsGatewayUrl = (uri: string) => {
   return `${IPFS_GATEWAY_URL.replace(/\/$/, "")}/${cidFromUri(uri)}`;
 };
 
-export const uploadElectionMetadataDocument = async (document: ElectionMetadataDocument) => {
-  if (!IPFS_API_KEY) {
-    throw new Error("Missing Lighthouse API key. Set EXPO_PUBLIC_LIGHTHOUSE_API_KEY or config/ipfs.ts.");
+const uploadToPinata = async (fileName: string, text: string) => {
+  const boundary = `----zkdapp-survey-${Date.now().toString(16)}`;
+  const response = await fetch(PINATA_UPLOAD_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${PINATA_JWT}`,
+      "Content-Type": `multipart/form-data; boundary=${boundary}`,
+    },
+    body: buildMultipartTextBody({
+      fieldName: "file",
+      fileName,
+      contentType: "application/json",
+      text,
+      boundary,
+      // Files must be public so the CID can be fetched through an IPFS gateway.
+      extraFields: { network: "public", name: fileName },
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Pinata/IPFS metadata upload failed (${response.status}): ${text}`);
   }
 
+  const payload = await response.json();
+  const cid = payload?.data?.cid;
+
+  if (!cid || typeof cid !== "string") {
+    throw new Error("Pinata upload did not return a CID.");
+  }
+
+  return normalizeIpfsUri(cid);
+};
+
+export const uploadElectionMetadataDocument = async (document: ElectionMetadataDocument) => {
   const fileName = `survey-election-metadata-${Date.now()}.json`;
+
+  if (PINATA_JWT) {
+    return uploadToPinata(fileName, stableStringify(document));
+  }
+
+  if (!IPFS_API_KEY) {
+    throw new Error(
+      "Missing IPFS credentials. Set EXPO_PUBLIC_PINATA_JWT or EXPO_PUBLIC_LIGHTHOUSE_API_KEY."
+    );
+  }
+
   const boundary = `----zkdapp-survey-${Date.now().toString(16)}`;
   const response = await fetch(LIGHTHOUSE_UPLOAD_URL, {
     method: "POST",

@@ -14,6 +14,7 @@ import { palette } from "@/theme/palette";
 import RequestBuilder from "@/components/RequestBuilder";
 import SdJwtParser from "@/components/SdJwtParser";
 import ProofGenerator from "@/components/ProofGenerator";
+import MoproBenchmark from "@/components/MoproBenchmark";
 import { useDeviceWallet } from "@/utils/vocdoni/WalletProvider";
 import { formatWalletAddress } from "@/utils/vocdoni/wallet";
 import { router } from "expo-router";
@@ -117,12 +118,13 @@ export default function Profile() {
                     <MaterialIcons name="chevron-right" size={20} color={palette.textMuted} />
                 </Pressable>
                 <Pressable
-                    style={[styles.row, styles.testToolRow]}
+                    style={[styles.row, styles.testToolRow, styles.rowBorder]}
                     onPress={() => setShowProofGenerator(true)}
                 >
                     <Text style={styles.testToolText}>Proof Generator</Text>
                     <MaterialIcons name="chevron-right" size={20} color={palette.textMuted} />
                 </Pressable>
+                <MoproBenchmark />
             </View>
 
             <Modal

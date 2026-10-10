@@ -22,6 +22,9 @@ export interface EligibilityCircuitInput {
     districtSalt: string;
     districtKey: string;
     districtValue: string;
+    pinSalt: string;
+    pinKey: string;
+    pinValue: string;
     currentDate: string;
     minAge: string;
     enableAgeCheck: string;
@@ -32,10 +35,16 @@ export interface EligibilityCircuitInput {
     enableCountryCheck: string;
     enableRegionCheck: string;
     enableDistrictCheck: string;
+    // v3 binding inputs
+    electionId: string;
+    voter: string;
 }
 
 export interface EligibilityCircuitInputOptions {
     currentDate?: string;
+    electionId?: string | number;
+    /** 0x-prefixed wallet address that will send registerForElection */
+    voter?: string;
     minAge?: string | number;
     enableAgeCheck?: string | number | boolean;
     requiredCountry?: string | number;
@@ -46,11 +55,14 @@ export interface EligibilityCircuitInputOptions {
     enableDistrictCheck?: string | number | boolean;
 }
 
-const AGE_ATTRIBUTE_KEYS = ["birth_date", "date_of_birth", "dob", "dobValue"];
-const EXPIRY_ATTRIBUTE_KEYS = ["expiry_date", "expiration", "expiration_date", "exp"];
-const COUNTRY_ATTRIBUTE_KEYS = ["country_code", "country", "issuing_country", "resident_country"];
-const REGION_ATTRIBUTE_KEYS = ["region", "state", "resident_state", "province"];
-const DISTRICT_ATTRIBUTE_KEYS = ["district", "county", "municipality", "city", "resident_district"];
+// The circuit fixes each slot to exactly one FIIssuer claim name, so aliases (e.g. "city" for district
+// or "issuing_country" for country) would only produce an unprovable input.
+const AGE_ATTRIBUTE_KEYS = ["birth_date"];
+const EXPIRY_ATTRIBUTE_KEYS = ["expiry_date"];
+const COUNTRY_ATTRIBUTE_KEYS = ["country_code"];
+const REGION_ATTRIBUTE_KEYS = ["region"];
+const DISTRICT_ATTRIBUTE_KEYS = ["district"];
+const PIN_ATTRIBUTE_KEYS = ["pin"];
 
 function stringToBigInt(value: string): string {
     const snarkField = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
@@ -232,6 +244,7 @@ export function buildEligibilityCircuitInput(
     const country = resolveDisclosureTuple(parsed, COUNTRY_ATTRIBUTE_KEYS, "country", true);
     const region = resolveDisclosureTuple(parsed, REGION_ATTRIBUTE_KEYS, "region", true);
     const district = resolveDisclosureTuple(parsed, DISTRICT_ATTRIBUTE_KEYS, "district", true);
+    const pin = resolveDisclosureTuple(parsed, PIN_ATTRIBUTE_KEYS, "personal identification number (pin)", false);
 
     return {
         ...identity,
@@ -250,6 +263,9 @@ export function buildEligibilityCircuitInput(
         districtSalt: district.salt,
         districtKey: district.key,
         districtValue: district.value,
+        pinSalt: pin.salt,
+        pinKey: pin.key,
+        pinValue: pin.value,
         currentDate,
         minAge: minAge || "0",
         enableAgeCheck: enableAgeCheck || "1",
@@ -259,6 +275,8 @@ export function buildEligibilityCircuitInput(
         enableCountryCheck: toCircuitFlag(options.enableCountryCheck, "0"),
         enableRegionCheck: toCircuitFlag(options.enableRegionCheck, "0"),
         enableDistrictCheck: toCircuitFlag(options.enableDistrictCheck, "0"),
+        electionId: toStringOrZero(options.electionId),
+        voter: options.voter ? BigInt(options.voter).toString() : "0",
     };
 }
 

@@ -39,8 +39,16 @@ template MainCheck() {
     signal input districtKey;
     signal input districtValue;
 
+    // personal identification number, the per-person basis of the nullifier
+    signal input pinSalt;
+    signal input pinKey;
+    signal input pinValue;
+
     // = Requirements (public) =
-    signal input currentDate;       // verified on-chain
+    // The order of declaration defines the order of public signals, which the contract relies on:
+    // [0] nullifier (output), [1..2] pubKey, [3] currentDate, [4] minAge, [5] requiredCountry,
+    // [6..10] allowedRegions, [11..15] allowedDistricts, [16..19] enable*Check, [20] electionId, [21] voter
+    signal input currentDate;       // checked on-chain against block.timestamp
     signal input minAge;
 
     signal input requiredCountry;
@@ -52,6 +60,35 @@ template MainCheck() {
     signal input enableCountryCheck;
     signal input enableRegionCheck;
     signal input enableDistrictCheck;
+
+    // = Binding (public) =
+    signal input electionId;        // checked on-chain, scopes the nullifier to one election
+    signal input voter;             // checked on-chain against msg.sender
+
+    signal output nullifier;
+
+    // === CLAIM KEYS ===
+    // Keys are strToBigInt(lowercase claim name), the same encoding FIIssuer uses for leaves.
+    // Without these constraints a prover could use any signed claim (e.g. issuance_date) in place of another.
+    var BIRTH_DATE_KEY = 464737070780541271372901;
+    var EXPIRY_DATE_KEY = 122670265392627131481158757;
+    var COUNTRY_CODE_KEY = 30773761292701632005028144229;
+    var REGION_KEY = 125779852226414;
+    var DISTRICT_KEY = 7235441220320322420;
+    var PIN_KEY = 7367022;
+
+    enableAgeCheck * (enableAgeCheck - 1) === 0;
+    enableCountryCheck * (enableCountryCheck - 1) === 0;
+    enableRegionCheck * (enableRegionCheck - 1) === 0;
+    enableDistrictCheck * (enableDistrictCheck - 1) === 0;
+
+    // Disabled checks may leave their disclosure empty, so their key is only enforced when enabled.
+    enableAgeCheck * (dobKey - BIRTH_DATE_KEY) === 0;
+    expKey === EXPIRY_DATE_KEY;
+    enableCountryCheck * (countryKey - COUNTRY_CODE_KEY) === 0;
+    enableRegionCheck * (regionKey - REGION_KEY) === 0;
+    enableDistrictCheck * (districtKey - DISTRICT_KEY) === 0;
+    pinKey === PIN_KEY;
 
 
     // === ELIGIBILITY CHECKS===
@@ -170,12 +207,32 @@ template MainCheck() {
     districtHashInLeaves.leaves <== leaves;
     signal districtHashValid <== enableDistrictCheck * districtHashInLeaves.found + (1 - enableDistrictCheck);
     districtHashValid === 1;
+
+    // === PIN check (mandatory)
+    component pinHasher = Poseidon(3);
+    pinHasher.inputs[0] <== pinSalt;
+    pinHasher.inputs[1] <== pinKey;
+    pinHasher.inputs[2] <== pinValue;
+
+    component pinHashInLeaves = HashInLeaves(10);
+    pinHashInLeaves.computedHash <== pinHasher.out;
+    pinHashInLeaves.leaves <== leaves;
+    pinHashInLeaves.found === 1;
+
+    // == NULLIFIER ==
+    // One registration per person per election, independent of which credential or wallet is used.
+    component nullifierHasher = Poseidon(2);
+    nullifierHasher.inputs[0] <== pinValue;
+    nullifierHasher.inputs[1] <== electionId;
+    nullifier <== nullifierHasher.out;
+
+    // A public input that appears in no constraint could be changed without invalidating the proof.
+    signal voterSquare <== voter * voter;
 }
 
 component main {public [
-    pubKey, 
-    merkleRoot, 
-    currentDate, 
+    pubKey,
+    currentDate,
     minAge,
     enableAgeCheck,
     requiredCountry,
@@ -183,8 +240,9 @@ component main {public [
     allowedRegions,
     enableRegionCheck,
     allowedDistricts,
-    enableDistrictCheck
-
+    enableDistrictCheck,
+    electionId,
+    voter
 ]} = MainCheck();
 
 

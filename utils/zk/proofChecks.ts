@@ -50,6 +50,14 @@ export function getProofCheckByKey(checkKey: string): ProofCheckDefinition | und
   return PROOF_CHECKS.find((check) => check.key === checkKey);
 }
 
+/** Today's UTC date as yyyymmdd, the format the contract compares with block.timestamp. */
+export function getUtcYyyyMmDd(now: Date = new Date()): string {
+  const y = now.getUTCFullYear();
+  const m = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(now.getUTCDate()).padStart(2, '0');
+  return `${y}${m}${d}`;
+}
+
 export function getUtcPlus2YyyyMmDd(now: Date = new Date()): string {
   const plus2 = new Date(now.getTime() + 2 * 60 * 60 * 1000);
   const y = plus2.getUTCFullYear();
