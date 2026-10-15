@@ -42,7 +42,6 @@ export default function VoterEligibilityProfileScreen() {
         }
     }, [profile]);
     const onSave = async () => {
-        console.log("saving profile:", { birthDate, location, education });
         await saveProfile({ birthDate, location, education });
         router.back();
     };

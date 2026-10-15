@@ -16,29 +16,27 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
+  checkRegistrationOnChain,
   getElection,
   isUserRegistered,
   registerForElection,
-  verifyEligibilityProofOnChain,
 } from "@/services/contractService";
 import { RequirementType } from "@/domain/models";
 import { palette } from "@/theme/palette";
 import { ChainElection, ContractElectionStatus, Groth16ProofCalldata } from "@/types/election";
 import { loadOrFetchElectionMetadata, StoredElectionMetadata } from "@/utils/electionMetadataStore";
 import { showAlert } from "@/utils/platformAlert";
-import {
-  extractNumericValue,
-  getAttributeCandidatesForRequirement,
-} from "@/utils/requirementAttributeMap";
-import { buildEligibilityCircuitInputFromToken, parseValueForCircuit } from "@/utils/sdjwt/eligibilityInput";
-import { getOrCreateDeviceWallet } from "@/utils/vocdoni/wallet";
+import { getAttributeCandidatesForRequirement } from "@/utils/requirementAttributeMap";
+import { buildEligibilityCircuitInputFromToken } from "@/utils/sdjwt/eligibilityInput";
+import { getVoterWalletForElection } from "@/utils/vocdoni/wallet";
 import {
   CREDENTIAL_TYPES,
   CredentialType,
   getCredentialTypeConfig,
 } from "@/utils/credentialConfig";
-import { getUtcPlus2YyyyMmDd } from "@/utils/zk/proofChecks";
-import { getResidencePermitCountryByLabel } from "@/utils/zk/residencePermitLocations";
+import { resolveAgeRequirement, resolveLocationRequirementInputs } from "@/utils/zk/eligibilityRules";
+import { generateEligibilityProofOnDevice } from "@/utils/zk/moproProver";
+import { getUtcYyyyMmDd } from "@/utils/zk/proofChecks";
 
 type Step =
   | "loading"
@@ -120,6 +118,10 @@ async function fetchWithTimeout(
   }
 }
 
+// "mopro" proves on the device; "service" uses the Node proof service (npm run proof:service), kept for comparison
+const ZK_PROVER: "mopro" | "service" =
+  process.env.EXPO_PUBLIC_ZK_PROVER?.trim() === "service" ? "service" : "mopro";
+
 function resolveProofServiceUrl(): string {
   const fromEnv = process.env.EXPO_PUBLIC_PROOF_SERVICE_URL;
   if (fromEnv?.trim()) {
@@ -157,98 +159,8 @@ function getRequestedClaimsForCredential(
 
   return config.attributes
     .map((attribute) => attribute.id)
+    // expiry_date is always proven (the circuit checks it); everything else only when a requirement needs it
     .filter((attributeId) => candidates.has(attributeId) || attributeId === "expiry_date");
-}
-
-function resolveAgeRequirement(requirements: { type: string; value: string }[]) {
-  const ageRequirement = requirements.find((requirement) => requirement.type === "Age");
-  if (!ageRequirement) {
-    return { enableAgeCheck: "0", minAge: "0" };
-  }
-
-  const minAge = extractNumericValue(ageRequirement.value);
-  if (minAge == null) {
-    throw new Error(`Could not extract an age value from "${ageRequirement.value}".`);
-  }
-
-  return { enableAgeCheck: "1", minAge: String(minAge) };
-}
-
-function padToFive(encoded: string[]): [string, string, string, string, string] {
-  const padded = encoded.slice(0, 5);
-  while (padded.length < 5) padded.push("0");
-  return padded as [string, string, string, string, string];
-}
-
-function normalizeRequirementTypeKey(type: string): string {
-  return String(type ?? "").trim().toLowerCase().replace(/[\s_-]+/g, "");
-}
-
-function parseLocationParts(value: string): { country: string; region: string; district: string } {
-  const [country = "", region = "", district = ""] = String(value ?? "")
-    .split(/\s*\/\s*/)
-    .map((part) => part.trim());
-
-  return { country, region, district };
-}
-
-function parseMultiValue(value: string): string[] {
-  return String(value ?? "")
-    .split(",")
-    .map((part) => part.trim())
-    .filter(Boolean);
-}
-
-function encodeCountryForCircuit(countryLabelOrCode: string): string {
-  const countryValue = countryLabelOrCode.trim();
-  const code = getResidencePermitCountryByLabel(countryValue)?.code ?? countryValue;
-  return parseValueForCircuit(code);
-}
-
-function resolveLocationRequirementInputs(requirements: { type: string; value: string }[]) {
-  let requiredCountry = "0";
-  let enableCountryCheck = "0";
-  let allowedRegions: [string, string, string, string, string] = ["0", "0", "0", "0", "0"];
-  let enableRegionCheck = "0";
-  let allowedDistricts: [string, string, string, string, string] = ["0", "0", "0", "0", "0"];
-  let enableDistrictCheck = "0";
-
-  for (const requirement of requirements) {
-    const typeKey = normalizeRequirementTypeKey(requirement.type);
-    const location = parseLocationParts(requirement.value);
-
-    if ((typeKey === "country" || typeKey === "location") && location.country) {
-      requiredCountry = encodeCountryForCircuit(location.country);
-      enableCountryCheck = "1";
-    }
-
-    const regionValue = location.region || (typeKey === "region" ? location.country : "");
-    if ((typeKey === "region" || typeKey === "location") && regionValue) {
-      const regionNames = parseMultiValue(regionValue);
-      if (regionNames.length > 0) {
-        allowedRegions = padToFive(regionNames.map(parseValueForCircuit));
-        enableRegionCheck = "1";
-      }
-    }
-
-    const districtValue = location.district || (typeKey === "district" ? location.country : "");
-    if ((typeKey === "district" || typeKey === "location") && districtValue) {
-      const districtNames = parseMultiValue(districtValue);
-      if (districtNames.length > 0) {
-        allowedDistricts = padToFive(districtNames.map(parseValueForCircuit));
-        enableDistrictCheck = "1";
-      }
-    }
-  }
-
-  return {
-    requiredCountry,
-    allowedRegions,
-    allowedDistricts,
-    enableCountryCheck,
-    enableRegionCheck,
-    enableDistrictCheck,
-  };
 }
 
 function isElectionExpired(election: ChainElection) {
@@ -348,8 +260,8 @@ export default function RegisterEligibilityScreen() {
           throw new Error("This election registration window has ended.");
         }
 
-        const wallet = await getOrCreateDeviceWallet();
-        const alreadyRegistered = await isUserRegistered(electionId, wallet.address);
+        const voterWallet = await getVoterWalletForElection(electionId);
+        const alreadyRegistered = await isUserRegistered(electionId, voterWallet.address);
         if (alreadyRegistered) {
           throw new Error("This wallet is already registered for the election.");
         }
@@ -490,8 +402,13 @@ export default function RegisterEligibilityScreen() {
         }`,
       );
 
+      // The proof binds this survey's own voter wallet; the relayer submits it and the token is minted to it
+      const voterWallet = await getVoterWalletForElection(electionId);
       const proofInput = buildEligibilityCircuitInputFromToken(sdJwtToken, {
-        currentDate: normalizeYyyyMmDd(getUtcPlus2YyyyMmDd(), "Current date"),
+        // The contract accepts today's or yesterday's UTC date
+        currentDate: getUtcYyyyMmDd(),
+        electionId: String(electionId),
+        voter: voterWallet.address,
         minAge: eligibilitySettings.minAge,
         enableAgeCheck: eligibilitySettings.enableAgeCheck,
         requiredCountry: locationSettings.requiredCountry,
@@ -528,48 +445,69 @@ export default function RegisterEligibilityScreen() {
       };
       setRequirementChecks([result]);
 
-      const baseUrl = resolveProofServiceUrl();
-      const response = await fetchWithTimeout(`${baseUrl}/proof/eligibility/generate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...finalProofInput,
-          surveyId: String(electionId),
-        }),
-      });
+      let calldata: Groth16ProofCalldata;
+      let timingSummary: string;
 
-      const payload = (await response.json()) as ProofServiceResponse;
-      if (!response.ok || !payload.ok) {
-        throw new Error(payload.error || "Proof generation failed.");
-      }
-      if (!isProofCalldata(payload.calldata)) {
-        throw new Error("Proof service did not return Solidity proof calldata. Restart the updated proof service.");
-      }
+      if (ZK_PROVER === "mopro") {
+        logProof("Generating proof on device (mopro)...");
+        const onDevice = await generateEligibilityProofOnDevice(finalProofInput);
+        calldata = onDevice.calldata;
+        timingSummary =
+          `on device: witness ${onDevice.witnessMs} ms, proving ${onDevice.provingMs} ms, ` +
+          `total ${Math.round(onDevice.totalMs)} ms`;
+      } else {
+        const baseUrl = resolveProofServiceUrl();
+        const startedAt = performance.now();
+        const response = await fetchWithTimeout(`${baseUrl}/proof/eligibility/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...finalProofInput,
+            surveyId: String(electionId),
+          }),
+        });
 
-      logProof(`Eligibility proof generation succeeded. inputPath=${payload.inputPath ?? "N/A"}`);
+        const payload = (await response.json()) as ProofServiceResponse;
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || "Proof generation failed.");
+        }
+        if (!isProofCalldata(payload.calldata)) {
+          throw new Error("Proof service did not return Solidity proof calldata. Restart the updated proof service.");
+        }
+        const totalMs = performance.now() - startedAt;
+        calldata = payload.calldata;
+        timingSummary = `proof service: total ${Math.round(totalMs)} ms incl. network`;
 
-      const verifyResponse = await fetchWithTimeout(`${baseUrl}/proof/eligibility/verify`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-      const verifyPayload = await verifyResponse.json();
-      if (!verifyResponse.ok) {
-        throw new Error(verifyPayload.error || "Verification request failed.");
-      }
-      if (!verifyPayload.ok) {
-        throw new Error("Proof verification failed locally.");
-      }
+        logProof(`Eligibility proof generation succeeded. inputPath=${payload.inputPath ?? "N/A"}`);
 
-      const verifiedOnChain = await verifyEligibilityProofOnChain(payload.calldata);
-      if (!verifiedOnChain) {
-        throw new Error("Proof verification failed on the smart contract.");
+        const verifyResponse = await fetchWithTimeout(`${baseUrl}/proof/eligibility/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        const verifyPayload = await verifyResponse.json();
+        if (!verifyResponse.ok) {
+          throw new Error(verifyPayload.error || "Verification request failed.");
+        }
+        if (!verifyPayload.ok) {
+          throw new Error("Proof verification failed locally.");
+        }
+      }
+      logProof(`Proof generated (${timingSummary}). Checking it against the contract...`);
+
+      const registrationError = await checkRegistrationOnChain(electionId, voterWallet.address, calldata);
+      if (registrationError === "Invalid ZK proof") {
+        // rust-witness does not enforce circuit constraints, so an ineligible credential still yields a
+        // (non-verifying) proof instead of failing during generation
+        throw new Error("Your credential does not meet this survey's requirements (the proof did not verify).");
+      }
+      if (registrationError) {
+        throw new Error(`The contract would reject this registration: ${registrationError}`);
       }
 
       result.status = "ok";
-      result.message = "Proof verified on contract";
-      result.inputPath = payload.inputPath;
+      result.message = `Proof verified on contract (${timingSummary})`;
       setRequirementChecks([result]);
-      setEligibilityProof(payload.calldata);
+      setEligibilityProof(calldata);
       setStep("confirmed");
       logProof("Eligibility proof verification succeeded.");
     } catch (error) {

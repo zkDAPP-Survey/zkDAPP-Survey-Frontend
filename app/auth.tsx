@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Pressable, Share } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 type JwtHeaderPayload = {
@@ -86,57 +86,6 @@ function splitHolderSignature(rawSignature: string): HolderSignatureCoordinates 
     },
     S: s,
   };
-}
-
-type LogLevel = 'log' | 'warn' | 'error';
-
-function emitTerminalLog(level: LogLevel, message: string) {
-  if (level === 'error') {
-    console.error(message);
-  } else if (level === 'warn') {
-    console.warn(message);
-  } else {
-    console.log(message);
-  }
-
-  const globalWithNativeLog = globalThis as typeof globalThis & {
-    nativeLoggingHook?: (msg: string, level?: number) => void;
-  };
-  const levelCode = level === 'error' ? 2 : level === 'warn' ? 1 : 0;
-  try {
-    globalWithNativeLog.nativeLoggingHook?.(message, levelCode);
-  } catch {
-    // Keep logging best-effort only.
-  }
-}
-
-function logJsonToTerminal(label: string, payload: unknown) {
-  const pretty = JSON.stringify(payload, null, 2);
-  const singleLine = JSON.stringify(payload);
-  if (!pretty) {
-    emitTerminalLog('log', `[AuthCallback] ${label}: <empty>`);
-    emitTerminalLog('warn', `[AuthCallback][WARN] ${label}: <empty>`);
-    return;
-  }
-
-  const chunkSize = 1800;
-  const chunks = Math.ceil(pretty.length / chunkSize);
-  emitTerminalLog('warn', `[AuthCallback][WARN] ${label} available; length=${pretty.length}; chunks=${chunks}`);
-  if (singleLine) {
-    const maxSingleLine = 3500;
-    const clipped = singleLine.length > maxSingleLine
-      ? `${singleLine.slice(0, maxSingleLine)}...<truncated>`
-      : singleLine;
-    // Single-line fallback helps when multiline logs are folded by terminal tooling.
-    emitTerminalLog('warn', `[AuthCallback][WARN][${label}] ${clipped}`);
-  }
-  emitTerminalLog('log', `[AuthCallback] ===== ${label} START =====`);
-  for (let i = 0; i < chunks; i += 1) {
-    const start = i * chunkSize;
-    const part = pretty.slice(start, start + chunkSize);
-    emitTerminalLog('log', `[AuthCallback] ${label} (${i + 1}/${chunks})\n${part}`);
-  }
-  emitTerminalLog('log', `[AuthCallback] ===== ${label} END =====`);
 }
 
 function parseStringArray(value?: string | null): string[] {
@@ -547,19 +496,6 @@ export default function AuthCallbackScreen() {
     setDebugLogs((current) => [...current.slice(-7), `${new Date().toLocaleTimeString()} ${message}`]);
   };
 
-  const sharePayload = async (title: string, payload: unknown) => {
-    try {
-      await Share.share({
-        title,
-        message: JSON.stringify(payload, null, 2),
-      });
-    } catch (error) {
-      appendDebugLog(
-        `Failed to share ${title}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      );
-    }
-  };
-
   // Fires on every render — confirms the screen mounted and received params.
   console.log('[AuthCallback] Screen rendered, requestId:', params.requestId ?? 'none', 'status:', params.status ?? 'none');
 
@@ -672,11 +608,6 @@ export default function AuthCallbackScreen() {
         appendDebugLog(`Resolved requested claims=${Object.keys(requestedDisclosedClaims).length}`);
         appendDebugLog(`Error code=${receivedData.errorCode || 'N/A'}`);
 
-        // Mirror payloads in terminal logs to ease copy/paste and offline inspection.
-        logJsonToTerminal('Raw SD-JWT Presentation', receivedData.rawSdJwtPresentation);
-        logJsonToTerminal('Raw Response', receivedData.parsedCircuitInput);
-        logJsonToTerminal('Circuit Input', receivedData.circuitInput);
-
         setCallbackData(receivedData);
 
         if ((flow === 'eligibility' || flow === 'registerEligibility') && surveyId) {
@@ -784,41 +715,8 @@ export default function AuthCallbackScreen() {
                   <Text style={styles.dataValue}>{callbackData.receivedAt}</Text>
                 </View>
 
-                <Text style={styles.dataTitle}>Raw SD-JWT from Valera</Text>
-                <View style={styles.credentialBox}>
-                  <Text style={styles.credentialText}>
-                    {callbackData.rawSdJwtPresentation || 'No presentation parameter received.'}
-                  </Text>
-                </View>
-                <View style={styles.actionsRow}>
-                  <Pressable
-                    style={({ pressed }) => [styles.secondaryButton, pressed && styles.secondaryButtonPressed]}
-                    onPress={() => sharePayload('Raw SD-JWT from Valera', callbackData.rawSdJwtPresentation)}
-                  >
-                    <Text style={styles.secondaryButtonText}>Share Raw SD-JWT</Text>
-                  </Pressable>
-                </View>
-
-                <Text style={styles.dataTitle}>Raw Response</Text>
-                <View style={styles.credentialBox}>
-                  <Text style={styles.credentialText}>
-                    {JSON.stringify(callbackData.parsedCircuitInput, null, 2)}
-                  </Text>
-                </View>
-                <View style={styles.actionsRow}>
-                  <Pressable
-                    style={({ pressed }) => [styles.secondaryButton, pressed && styles.secondaryButtonPressed]}
-                    onPress={() => sharePayload('Raw Response', callbackData.parsedCircuitInput)}
-                  >
-                    <Text style={styles.secondaryButtonText}>Share Raw Response</Text>
-                  </Pressable>
-                </View>
-
-                <Text style={styles.dataTitle}>Circuit Input</Text>
-                <View style={styles.credentialBox}>
-                  <Text style={styles.credentialText}>{''}</Text>
-                </View>
-
+                {/* The presentation and disclosed claims are personal data: they are passed to the proof
+                    screen in memory only, never logged, displayed or shared. */}
                 {callbackData.errorCode && (
                   <View style={styles.dataRow}>
                     <Text style={styles.dataLabel}>Error Code:</Text>

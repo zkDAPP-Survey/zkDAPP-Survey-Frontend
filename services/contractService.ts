@@ -8,6 +8,7 @@ import { toUtf8Bytes, toUtf8String } from "@ethersproject/strings";
 import { Wallet } from "@ethersproject/wallet";
 
 import {
+  RELAYER_URL,
   SEPOLIA_CHAIN_ID,
   SURVEY_MANAGER_CONTRACT_ADDRESS,
   SURVEY_MANAGER_DEPLOYMENT_BLOCK,
@@ -27,7 +28,8 @@ import {
   Uint256Like,
 } from "@/types/election";
 import { hashJson } from "@/utils/hash";
-import { getOrCreateDeviceWallet } from "@/utils/vocdoni/wallet";
+import { computeEligibilityHash, resolveEligibilityRules } from "@/utils/zk/eligibilityRules";
+import { getOrCreateDeviceWallet, getVoterWalletForElection } from "@/utils/vocdoni/wallet";
 import { createVocdoniElectionFromTokenCensus } from "@/services/vocdoniService";
 import {
   buildElectionMetadataDocument,
@@ -97,14 +99,17 @@ const encodeGroth16Proof = (proof: Groth16ProofCalldata) =>
   )}${encodeUint256(proof.pi_b[0][1])}${encodeUint256(proof.pi_b[1][0])}${encodeUint256(
     proof.pi_b[1][1]
   )}${encodeUint256(proof.pi_c[0])}${encodeUint256(proof.pi_c[1])}${proof.pubInputs
-    .slice(0, 20)
+    .slice(0, PUBLIC_INPUT_COUNT)
     .map(encodeUint256)
     .join("")}`;
 
+// Public signals of zk/build/v4: nullifier, issuer key, date, 16 survey rules, electionId, voter
+const PUBLIC_INPUT_COUNT = 22;
+
 const requireContractProofShape = (proof: Groth16ProofCalldata) => {
-  if (proof.pubInputs.length !== 20) {
+  if (proof.pubInputs.length !== PUBLIC_INPUT_COUNT) {
     throw new Error(
-      `The deployed registration contract expects 20 public inputs, but the generated proof has ${proof.pubInputs.length}. Deploy the updated verifier contract or use the matching proof service/circuit.`
+      `The deployed registration contract expects ${PUBLIC_INPUT_COUNT} public inputs, but the generated proof has ${proof.pubInputs.length}. Deploy the updated verifier contract or use the matching proof service/circuit.`
     );
   }
 };
@@ -112,15 +117,26 @@ const requireContractProofShape = (proof: Groth16ProofCalldata) => {
 const buildRegisterForElectionCallData = (electionId: number, proof: Groth16ProofCalldata) => {
   requireContractProofShape(proof);
   return `0x${stripHexPrefix(
-    getSelector("registerForElection(uint256,uint256[2],uint256[2][2],uint256[2],uint256[20])")
+    getSelector("registerForElection(uint256,uint256[2],uint256[2][2],uint256[2],uint256[22])")
   )}${encodeUint256(electionId)}${encodeGroth16Proof(proof)}`;
 };
 
 const buildVerifyProofViewCallData = (proof: Groth16ProofCalldata) => {
   requireContractProofShape(proof);
   return `0x${stripHexPrefix(
-    getSelector("verifyProofView(uint256[2],uint256[2][2],uint256[2],uint256[20])")
+    getSelector("verifyProofView(uint256[2],uint256[2][2],uint256[2],uint256[22])")
   )}${encodeGroth16Proof(proof)}`;
+};
+
+const buildCheckRegistrationCallData = (
+  electionId: number,
+  voter: string,
+  proof: Groth16ProofCalldata
+) => {
+  requireContractProofShape(proof);
+  return `0x${stripHexPrefix(
+    getSelector("checkRegistration(uint256,address,uint256[2],uint256[2][2],uint256[2],uint256[22])")
+  )}${encodeUint256(electionId)}${encodeAddress(voter)}${encodeGroth16Proof(proof)}`;
 };
 
 const buildStartElectionCallData = (
@@ -139,9 +155,6 @@ const buildGetElectionCallData = (electionId: number) =>
 
 const buildGetCreatorElectionsCallData = (creator: string) =>
   `0x${stripHexPrefix(getSelector("getCreatorElections(address)"))}${encodeAddress(creator)}`;
-
-const buildGetVoterElectionsCallData = (voter: string) =>
-  `0x${stripHexPrefix(getSelector("getVoterElections(address)"))}${encodeAddress(voter)}`;
 
 const buildIsRegisteredCallData = (electionId: number, voter: string) =>
   `0x${stripHexPrefix(getSelector("isRegistered(uint256,address)"))}${encodeUint256(
@@ -223,7 +236,33 @@ const normalizeTxError = (error: unknown) => {
     return new Error("Eligibility proof public input is out of range.");
   }
 
+  // ethers v5 wraps reverts during gas estimation as "cannot estimate gas"; surface the contract's reason
+  const revertReason = extractRevertReason(error);
+  if (revertReason) {
+    return new Error(`The contract rejected the transaction: ${revertReason}`);
+  }
+
   return error;
+};
+
+const extractRevertReason = (error: unknown): string | null => {
+  const candidates: unknown[] = [];
+  let current: any = error;
+  for (let depth = 0; current && depth < 4; depth += 1) {
+    candidates.push(current.reason, current.message, current.body);
+    current = current.error;
+  }
+  for (const candidate of candidates) {
+    // geth/Sepolia: "execution reverted: X"; Hardhat: "reverted with reason string 'X'"
+    const match =
+      typeof candidate === "string"
+        ? candidate.match(/execution reverted:\s*([^"\\]+)/i) || candidate.match(/reverted with reason string '([^']+)'/i)
+        : null;
+    if (match) {
+      return match[1].trim();
+    }
+  }
+  return null;
 };
 
 const ensureSepolia = async (provider: JsonRpcProvider) => {
@@ -328,7 +367,8 @@ export const createElectionOnChain = async (
   const metadata = buildMetadata(formData);
   const eligibility = buildEligibility(formData);
   const metadataHash = hashJson(metadata);
-  const eligibilityHash = hashJson(eligibility);
+  // Binds the survey to the requirement public inputs every registration proof must carry
+  const eligibilityHash = computeEligibilityHash(resolveEligibilityRules(eligibility.requirements));
   const metadataURI = await uploadElectionMetadataDocument(
     buildElectionMetadataDocument(metadata, eligibility)
   );
@@ -398,26 +438,52 @@ export const verifyEligibilityProofOnChain = async (proof: Groth16ProofCalldata)
   }
 };
 
-export const registerForElection = async (electionId: number, proof: Groth16ProofCalldata) => {
-  const signer = await getSigner();
-
+/** Returns "" when `voter` could register with this proof, otherwise the contract's rejection reason. */
+export const checkRegistrationOnChain = async (
+  electionId: number,
+  voter: string,
+  proof: Groth16ProofCalldata
+): Promise<string> => {
   try {
-    const transaction = await signer.sendTransaction({
-      to: SURVEY_MANAGER_CONTRACT_ADDRESS,
-      data: buildRegisterForElectionCallData(electionId, proof),
-    });
-    const receipt = await transaction.wait();
-    const registered = await isUserRegistered(electionId, signer.address);
-
-    return {
-      txHash: transaction.hash,
-      blockNumber: receipt?.blockNumber ?? null,
-      registered,
-      walletAddress: signer.address,
-    };
+    const response = await readContract(buildCheckRegistrationCallData(electionId, voter, proof));
+    const payload = stripHexPrefix(response);
+    return decodeStringAt(payload, 0, decodeUint256(readWord(payload, 0)));
   } catch (error) {
     throw normalizeTxError(error);
   }
+};
+
+/**
+ * Registers the survey's voter wallet (the address bound in the proof) through the relayer, so the voter wallet
+ * never sends a transaction or needs ETH, and no funding transaction links it to the user.
+ */
+export const registerForElection = async (electionId: number, proof: Groth16ProofCalldata) => {
+  const voter = await getVoterWalletForElection(electionId);
+
+  let payload: { ok?: boolean; error?: string; txHash?: string; blockNumber?: number };
+  try {
+    const response = await fetch(`${RELAYER_URL}/relay/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: buildRegisterForElectionCallData(electionId, proof) }),
+    });
+    payload = await response.json();
+  } catch (error) {
+    throw new Error(
+      `Cannot reach the registration relayer at ${RELAYER_URL} (npm run relayer): ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
+  if (!payload.ok || !payload.txHash) {
+    throw new Error(payload.error || "The relayer could not submit the registration.");
+  }
+
+  const registered = await isUserRegistered(electionId, voter.address);
+  return {
+    txHash: payload.txHash,
+    blockNumber: payload.blockNumber ?? null,
+    registered,
+    walletAddress: voter.address,
+  };
 };
 
 export const startElectionWithVocdoni = async (
@@ -584,11 +650,16 @@ export const getMyCreatedElections = async () => {
   return Promise.all(ids.map((id) => getElection(id)));
 };
 
+/** Elections in which this device's per-survey voter wallet is registered. */
 export const getMyRegisteredElections = async () => {
-  const wallet = await getOrCreateDeviceWallet();
-  const response = await readContract(buildGetVoterElectionsCallData(wallet.address));
-  const ids = decodeUint256Array(response);
-  return Promise.all(ids.map((id) => getElection(id)));
+  const count = await getElectionCountUpperBound();
+  const elections = await Promise.all(Array.from({ length: count }, (_, index) => getElection(index + 1)));
+  const registered = await Promise.all(
+    elections.map(async (election) =>
+      isUserRegistered(election.id, (await getVoterWalletForElection(election.id)).address)
+    )
+  );
+  return elections.filter((_, index) => registered[index]);
 };
 
 export const isUserRegistered = async (electionId: number, userAddress: string) => {

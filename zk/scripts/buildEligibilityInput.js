@@ -68,6 +68,10 @@ function buildEligibilityInput(source = {}) {
     // District check: up to 5 allowed encoded district values
     allowedDistricts: asPaddedArray(source.allowedDistricts, 5),
     enableDistrictCheck: asFlag(source.enableDistrictCheck),
+
+    // ── Binding: the contract only accepts the proof for this election and wallet ──
+    electionId: asString(source.electionId),
+    voter: asString(source.voter),
   };
 }
 

@@ -15,7 +15,9 @@
     "lint": "expo lint",
     "proof:service": "node zk/scripts/proofService.js",
     "proof:eligibility": "node zk/scripts/runAgeProofFlow.js",
-    "proof:age": "node zk/scripts/runAgeProofFlow.js"
+    "proof:age": "node zk/scripts/runAgeProofFlow.js",
+    "relayer": "node relayer/relayerService.js",
+    "reverse": "node scripts/adbReverse.js"
   },
   "dependencies": {
     "@ethersproject/wallet": "^5.7.0",

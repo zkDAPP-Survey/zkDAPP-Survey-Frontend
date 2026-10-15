@@ -11,7 +11,7 @@ import {
   isUserRegistered,
 } from '@/services/contractService';
 import { createVocdoniClient } from '@/utils/vocdoni/sdk';
-import { getOrCreateDeviceWallet } from '@/utils/vocdoni/wallet';
+import { getVoterWalletForElection } from '@/utils/vocdoni/wallet';
 
 // The SDK is loaded lazily to match the existing Vocdoni helpers in this app.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -247,7 +247,14 @@ const fetchCensusProofForWallet = async ({
 
 export const voteSurvey = async (electionId: string, choices: (number | bigint)[] = [0]) => {
   const { Vote, ElectionStatus } = getVocdoniSdk();
-  const wallet = await getOrCreateDeviceWallet();
+
+  const contractElection = await resolveContractElectionForVocdoniId(electionId);
+  if (!contractElection) {
+    throw new Error('This Vocdoni election is not linked to a started smart-contract survey.');
+  }
+
+  // The vote is cast by the survey's own voter wallet, the address registered (and in the census) for it
+  const wallet = await getVoterWalletForElection(contractElection.id);
   const client = await createVocdoniClient(wallet);
 
   client.setElectionId(electionId);
@@ -257,11 +264,6 @@ export const voteSurvey = async (electionId: string, choices: (number | bigint)[
     walletAddress: wallet.address,
     choices,
   });
-
-  const contractElection = await resolveContractElectionForVocdoniId(electionId);
-  if (!contractElection) {
-    throw new Error('This Vocdoni election is not linked to a started smart-contract survey.');
-  }
 
   const [registered, tokenBalance] = await Promise.all([
     isUserRegistered(contractElection.id, wallet.address),
@@ -278,7 +280,7 @@ export const voteSurvey = async (electionId: string, choices: (number | bigint)[
 
   if (!registered || tokenBalance <= 0) {
     throw new Error(
-      'Current device wallet does not hold the smart-contract eligibility token for this survey.'
+      "This survey's voter wallet does not hold the smart-contract eligibility token. Register for the survey first."
     );
   }
 
