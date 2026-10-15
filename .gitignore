@@ -61,3 +61,9 @@ MoproReactNativeBindings/android/.cxx/
 MoproReactNativeBindings/lib/
 # relayer key (npm run relayer -- --keygen)
 relayer/.env
+
+# local measurement harness (not part of the app)
+zk/measure/
+
+# local export test output
+.expo-export-test/

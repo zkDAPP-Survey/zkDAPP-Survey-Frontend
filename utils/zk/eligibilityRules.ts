@@ -131,7 +131,7 @@ export function toRuleSignals(rules: EligibilityRules): string[] {
   ];
 }
 
-/** Matches SurveyManager_v2 `keccak256(abi.encodePacked(uint256[16] rules))`. */
+/** Matches SurveyManager `keccak256(abi.encodePacked(uint256[16] rules))`. */
 export function computeEligibilityHash(rules: EligibilityRules): string {
   const words = toRuleSignals(rules).map((value) => BigInt(value).toString(16).padStart(64, "0"));
   return keccak256(`0x${words.join("")}`);

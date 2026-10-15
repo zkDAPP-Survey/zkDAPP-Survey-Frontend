@@ -455,7 +455,6 @@ export default function RegisterEligibilityScreen() {
         timingSummary =
           `on device: witness ${onDevice.witnessMs} ms, proving ${onDevice.provingMs} ms, ` +
           `total ${Math.round(onDevice.totalMs)} ms`;
-        console.log("[zk-timing]", JSON.stringify({ prover: "mopro", platform: Platform.OS, ...onDevice, calldata: undefined }));
       } else {
         const baseUrl = resolveProofServiceUrl();
         const startedAt = performance.now();
@@ -478,7 +477,6 @@ export default function RegisterEligibilityScreen() {
         const totalMs = performance.now() - startedAt;
         calldata = payload.calldata;
         timingSummary = `proof service: total ${Math.round(totalMs)} ms incl. network`;
-        console.log("[zk-timing]", JSON.stringify({ prover: "service", platform: Platform.OS, totalMs }));
 
         logProof(`Eligibility proof generation succeeded. inputPath=${payload.inputPath ?? "N/A"}`);
 

@@ -32,7 +32,7 @@ export interface EligibilityCircuitInput {
     enableCountryCheck: string;
     enableRegionCheck: string;
     enableDistrictCheck: string;
-    // v3 binding inputs
+    // binding inputs: the proof is valid only for this survey and voter wallet
     electionId: string;
     voter: string;
 }

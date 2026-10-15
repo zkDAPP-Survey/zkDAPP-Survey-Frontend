@@ -10,7 +10,7 @@ import { EligibilityCircuitInput } from "@/utils/sdjwt/eligibilityInput";
 
 // On-device Groth16 proving with mopro (native Rust, arkworks) for circuit v4.
 // The native prover selects the witness calculator by the zkey file name, so the asset name must stay
-// "eligibility_v4.zkey" (see mopro-prover/zksurvey-wsl-src/src/lib.rs). A new name per circuit version also
+// "eligibility_v4.zkey". A new name per circuit version also
 // keeps devices from reusing a zkey cached by an older app build.
 const ZKEY_FILE_NAME = "eligibility_v4.zkey";
 

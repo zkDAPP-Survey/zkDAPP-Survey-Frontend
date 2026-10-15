@@ -2,7 +2,7 @@ export const SEPOLIA_CHAIN_ID = 11155111;
 
 export const SURVEY_MANAGER_CONTRACT_ADDRESS =
   process.env.EXPO_PUBLIC_SURVEY_MANAGER_ADDRESS?.trim() ||
-  "0xad647D702992FEc37A2814b1207fFF52C0171935";
+  "0x00E44131f633b54A5220A2b6468a1D8886e5bc81";
 
 
 export const SURVEY_MANAGER_RPC_URL =
@@ -15,7 +15,7 @@ export const RELAYER_URL =
   process.env.EXPO_PUBLIC_RELAYER_URL?.trim() || "http://10.0.2.2:8790";
 
 export const SURVEY_MANAGER_DEPLOYMENT_BLOCK = Number(
-  process.env.EXPO_PUBLIC_SURVEY_MANAGER_DEPLOYMENT_BLOCK ?? 10854396
+  process.env.EXPO_PUBLIC_SURVEY_MANAGER_DEPLOYMENT_BLOCK ?? 11886595
 );
 
 export const SURVEY_MANAGER_ABI = [
@@ -24,13 +24,13 @@ export const SURVEY_MANAGER_ABI = [
   "event ElectionStarted(uint256 indexed electionId,string vocdoniElectionId,bytes32 vocdoniSpecHash)",
   "event ProofVerified(address indexed submitter,uint256 indexed electionId,bool result)",
   "function createElection(string metadataURI,bytes32 metadataHash,bytes32 eligibilityHash,uint256 maxVoters,uint256 startDate,uint256 endDate) returns (uint256 electionId)",
-  "function registerForElection(uint256 electionId,uint256[2] pi_a,uint256[2][2] pi_b,uint256[2] pi_c,uint256[20] pubInputs)",
+  "function registerForElection(uint256 electionId,uint256[2] pi_a,uint256[2][2] pi_b,uint256[2] pi_c,uint256[22] pubInputs)",
   "function startElection(uint256 electionId,string vocdoniElectionId,bytes32 vocdoniSpecHash)",
   "function getElection(uint256 electionId) view returns ((uint256 id,address creator,uint256 tokenId,string metadataURI,bytes32 metadataHash,bytes32 eligibilityHash,uint256 maxVoters,uint256 startDate,uint256 endDate,uint256 registeredVoters,uint8 status,string vocdoniElectionId,bytes32 vocdoniSpecHash,uint256 createdAt,uint256 startedAt))",
   "function getCreatorElections(address creator) view returns (uint256[])",
   "function getVoterElections(address voter) view returns (uint256[])",
   "function isRegistered(uint256 electionId,address voter) view returns (bool)",
   "function balanceOf(address account,uint256 id) view returns (uint256)",
-  "function verifyProofView(uint256[2] pi_a,uint256[2][2] pi_b,uint256[2] pi_c,uint256[20] pubInputs) view returns (bool)",
+  "function verifyProofView(uint256[2] pi_a,uint256[2][2] pi_b,uint256[2] pi_c,uint256[22] pubInputs) view returns (bool)",
   "function nextElectionId() view returns (uint256)",
 ] as const;

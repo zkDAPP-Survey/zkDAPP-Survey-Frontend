@@ -56,7 +56,7 @@ template MainCheck() {
     signal input enableRegionCheck;
     signal input enableDistrictCheck;
 
-    // = Binding (public) =
+    // === BINDING (public) ===
     signal input electionId;        // checked on-chain, scopes the nullifier to one election
     signal input voter;             // the contract mints the registration token to this address
 
@@ -84,7 +84,7 @@ template MainCheck() {
     enableDistrictCheck * (districtKey - DISTRICT_KEY) === 0;
 
 
-    // === ELIGIBILITY CHECKS===
+    // === ELIGIBILITY CHECKS ===
 
     // === Age check
     component ageCheck = GreaterEqThan(32);
@@ -114,7 +114,7 @@ template MainCheck() {
     regionValid === 1;
 
 
-    // === District check 
+    // === District check
     component districtMatcher = MatchAnyOf(5);
     districtMatcher.disclosedValue <== districtValue;
     districtMatcher.allowedValues <== allowedDistricts;
@@ -140,7 +140,7 @@ template MainCheck() {
     merkleVerifier.expectedRoot <== merkleRoot;
 
 
-    // == HASH CHECKS ==
+    // === HASH CHECKS ===
 
     // === Age check
     component dobHasher = Poseidon(3);
@@ -201,7 +201,7 @@ template MainCheck() {
     signal districtHashValid <== enableDistrictCheck * districtHashInLeaves.found + (1 - enableDistrictCheck);
     districtHashValid === 1;
 
-    // == NULLIFIER ==
+    // === NULLIFIER ===
     // One registration per credential per election. It is derived from the issuer's signature scalar S
     // (~251 bits, private, fixed per credential: EdDSAPoseidonVerifier enforces S < subgroup order), so unlike a
     // personal number it cannot be brute-forced to link a registration to a person.
